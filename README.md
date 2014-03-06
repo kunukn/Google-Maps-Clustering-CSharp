@@ -1,6 +1,6 @@
 Google-Maps-Clustering-CSharp
 =============================
 
-todo 
+todo update
 
-Port from https://code.google.com/p/google-maps-server-side-clustering-dotnet/
+Project moved from: https://code.google.com/p/google-maps-server-side-clustering-dotnet/
