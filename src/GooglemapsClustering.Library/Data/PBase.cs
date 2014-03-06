@@ -3,7 +3,7 @@ using GooglemapsClustering.Clustering.Utility;
 
 namespace GooglemapsClustering.Clustering.Data
 {
-    //[Serializable]
+    [Serializable]
     public abstract class PBase
     {
         private static int _counter;        

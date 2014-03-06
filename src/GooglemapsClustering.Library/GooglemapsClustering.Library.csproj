@@ -48,6 +48,7 @@
     <Compile Include="Data\Bucket.cs" />
     <Compile Include="Data\ClusterInfo.cs" />
     <Compile Include="Data\DatasetToSerialize.cs" />
+    <Compile Include="Data\Json\JsonGetMarkersInput.cs" />
     <Compile Include="Data\Json\JsonGetMarkersReceive.cs" />
     <Compile Include="Data\Json\JsonInfoReply.cs" />
     <Compile Include="Data\Json\JsonMarkerInfoReply.cs" />

@@ -14,21 +14,24 @@ namespace GooglemapsClustering.Web.Controllers
             _mapService = new MapService();
         }
 
-        public ActionResult Index()
+        public JsonResult Index()
         {
             return Json("json service", JsonRequestBehavior.AllowGet);
         }
 
-        public ContentResult GetMarkers(string id)
+        public ContentResult GetMarkers(JsonGetMarkersInput input)
         {            
-            JsonMarkersReply data = _mapService.GetMarkers(id);            
-            return JsonMin(data);            
+            return JsonMin(_mapService.GetMarkers(input));
         }
 
-        public ActionResult GetMarkerInfo(string id)
-        {
-            JsonMarkerInfoReply data = _mapService.GetMarkerInfo(id);
-            return JsonMin(data);            
-        }        
+        public ContentResult GetMarkerInfo(string id)
+        {            
+            return JsonMin(_mapService.GetMarkerInfo(id));
+        }
+
+        public ContentResult Info(string id)
+        {            
+            return JsonMin(_mapService.Info());
+        }
     }
 }

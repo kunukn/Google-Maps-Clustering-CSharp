@@ -26,11 +26,9 @@ namespace GooglemapsClustering.Clustering.Service
             public const string nelon = "nelon";
             public const string swlat = "swlat";
             public const string swlon = "swlon";
-            public const string zoom = "zoom";
-
+            public const string zoomLevel = "zoomLevel";
             public const string filter = "filter";
-            public const string sid = "sid";
-
+            
             // markerInfo
             public const string id = "id";
 
@@ -40,7 +38,7 @@ namespace GooglemapsClustering.Clustering.Service
                                                          nelon,
                                                          swlat,
                                                          swlon,
-                                                         zoom,
+                                                         zoomLevel,
                                                      };
 
             public static readonly HashSet<string> MarkerInfoReq = new HashSet<string>
@@ -48,62 +46,27 @@ namespace GooglemapsClustering.Clustering.Service
                                                          id
                                                      };
         }
-        
-        
-
-        
-        public JsonMarkersReply GetMarkers(string s)
+       
+        public JsonMarkersReply GetMarkers(JsonGetMarkersInput input)
         {
             var invalid = new JsonMarkersReply { Ok = "0" };
-
-            if (string.IsNullOrWhiteSpace(s))
-            {
-                invalid.EMsg = "params is empty";
-                return invalid;
-            }
-
-            var arr = s.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
-            if (arr.Length < 5)
-            {
-                invalid.EMsg = "params length incorrect";
-                return invalid;
-            }
-
-            var nvc = new NameValueCollection();
-            foreach (var a in arr)
-            {
-                var kv = a.Split(new[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
-                if (kv.Length != 2) continue;
-
-                nvc.Add(kv[0], kv[1]);
-            }
-
-            foreach (var key in Protocol.MarkersReq)
-            {
-                if (nvc[key] != null) continue;
-
-                invalid.EMsg = string.Format("param {0} is missing", key);
-                return invalid;
-            }
-
             try
             {
-                var nelat = nvc[Protocol.nelat].Replace("_", ".").ToDouble();
-                var nelon = nvc[Protocol.nelon].Replace("_", ".").ToDouble();
-                var swlat = nvc[Protocol.swlat].Replace("_", ".").ToDouble();
-                var swlon = nvc[Protocol.swlon].Replace("_", ".").ToDouble();
-                var zoomlevel = int.Parse(nvc[Protocol.zoom]);
+                var nelat = input.nelat.Replace("_", ".").ToDouble();
+                var nelon = input.nelon.Replace("_", ".").ToDouble();
+                var swlat = input.swlat.Replace("_", ".").ToDouble();
+                var swlon = input.swlon.Replace("_", ".").ToDouble();
+                var zoomLevel = int.Parse(input.zoomLevel);
+                var filter = input.filter ?? "";
 
-                var filter = nvc[Protocol.filter] ?? "";
-                var sendid = nvc[Protocol.sid] == null ? 1 : int.Parse(nvc[Protocol.sid]);
-
-                // values are validated there
                 var sw = new Stopwatch();
                 sw.Start();
 
-                var jsonReceive = new JsonGetMarkersReceive(nelat, nelon, swlat, swlon, zoomlevel, filter, sendid);
+                // values are validated there
+                var jsonReceive = new JsonGetMarkersReceive(nelat, nelon, swlat, swlon, zoomLevel, filter);
 
-                var clusteringEnabled = jsonReceive.IsClusteringEnabled || AlgoConfig.Get.AlwaysClusteringEnabledWhenZoomLevelLess > jsonReceive.Zoomlevel;
+                var clusteringEnabled = jsonReceive.IsClusteringEnabled 
+                    || AlgoConfig.Get.AlwaysClusteringEnabledWhenZoomLevelLess > jsonReceive.Zoomlevel;
 
                 JsonMarkersReply reply;
 
@@ -144,7 +107,6 @@ namespace GooglemapsClustering.Clustering.Service
                     reply = new JsonMarkersReply
                     {
                         Markers = clusterPoints,
-                        Rid = sendid,
                         Polylines = clusterAlgo.Lines,
                         Msec = Sw(sw),
                     };
@@ -161,36 +123,32 @@ namespace GooglemapsClustering.Clustering.Service
                 reply = new JsonMarkersReply
                 {
                     Markers = filteredDatasetMaxPoints,
-                    Rid = sendid,
                     Polylines = clusterAlgo.Lines,
                     Mia = filteredDataset.Count - filteredDatasetMaxPoints.Count,
                     Msec = Sw(sw),
                 };
-                return reply;                
+                return reply;
             }
             catch (Exception ex)
             {
                 invalid.EMsg = string.Format("Parsing error param: {0}",
                     ex.Message);
+                return invalid;
             }
-
-            return invalid;
         }
 
-        
-        public JsonMarkerInfoReply GetMarkerInfo(string s)
+        public JsonMarkersReply GetMarkers(string s)
         {
-            var invalid = new JsonMarkerInfoReply { Ok = "0" };
+            var invalid = new JsonMarkersReply { Ok = "0" };
 
             if (string.IsNullOrWhiteSpace(s))
             {
-                invalid.EMsg = "params is empty";
+                invalid.EMsg = "MapService says: params is invalid";
                 return invalid;
             }
 
             var arr = s.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
-            if (arr.Length < 1) return invalid;
-
+     
             var nvc = new NameValueCollection();
             foreach (var a in arr)
             {
@@ -200,39 +158,54 @@ namespace GooglemapsClustering.Clustering.Service
                 nvc.Add(kv[0], kv[1]);
             }
 
-            foreach (var key in Protocol.MarkerInfoReq)
+            foreach (var key in Protocol.MarkersReq)
             {
                 if (nvc[key] != null) continue;
 
-                invalid.EMsg = string.Format("param {0} is missing", key);
+                invalid.EMsg = string.Format("MapService says: param {0} is missing", key);
                 return invalid;
             }
 
-
-            try
+            return GetMarkers(new JsonGetMarkersInput
             {
-                var id = nvc[Protocol.id];
-                var sid = nvc[Protocol.sid] == null ? 1 : int.Parse(nvc[Protocol.sid]);
+                nelat = nvc[Protocol.nelat].Replace("_", "."),
+                nelon = nvc[Protocol.nelon].Replace("_", "."),
+                swlat = nvc[Protocol.swlat].Replace("_", "."),
+                swlon = nvc[Protocol.swlon].Replace("_", "."),
+                zoomLevel = nvc[Protocol.zoomLevel],
+                filter = nvc[Protocol.filter],
+            });                        
+        }
 
-                // values are validated there
+        
+        public JsonMarkerInfoReply GetMarkerInfo(string id)
+        {
+            var invalid = new JsonMarkerInfoReply { Ok = "0" };
+
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                invalid.EMsg = "MapService says: params is invalid";
+                return invalid;
+            }            
+            try
+            {                                                
                 var sw = new Stopwatch();
                 sw.Start();
 
                 var uid = int.Parse(id);
 
-                var marker = MemoryDatabase.GetPoints().SingleOrDefault(i => i.I == uid);
+                var marker = MemoryDatabase.GetPoints().SingleOrDefault(i => i.I == uid); // O(n)
                 if (marker == null)
                 {
                     return new JsonMarkerInfoReply
                     {
                         Id = id,
-                        Content = "Marker could not be found",
-                        Rid = sid,
+                        Content = "Marker could not be found",                        
                         Msec = Sw(sw)
                     };
                 }
 
-                var reply = new JsonMarkerInfoReply { Rid = sid, };
+                var reply = new JsonMarkerInfoReply {};
 
                 reply.BuildContent(marker);
 
@@ -241,7 +214,7 @@ namespace GooglemapsClustering.Clustering.Service
             }
             catch (Exception ex)
             {
-                invalid.EMsg = string.Format("Parsing error param: {0}",
+                invalid.EMsg = string.Format("MapService says: Parsing error param: {0}",
                     ex.Message);
             }
 
@@ -251,12 +224,12 @@ namespace GooglemapsClustering.Clustering.Service
 
         public JsonInfoReply Info()
         {
-            var reply = new JsonInfoReply
+            return new JsonInfoReply
             {
                 DbSize = MemoryDatabase.GetPoints().Count,
-                Points = MemoryDatabase.GetPoints().Take(3).ToList()
+                FirstPoint = MemoryDatabase.GetPoints().FirstOrDefault()
             };
-            return reply;
+            
         } 
     }
 }

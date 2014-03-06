@@ -33,7 +33,7 @@ body {
     color: #fff; 
 }
 
-#gmcKN_map_container
+#gmcKN-map-container
 {
     width: 100%;
     height: 100%;    
@@ -41,7 +41,7 @@ body {
     border: 0px #f00 solid;
 }
     
-#gmcKN_map
+#gmcKN-map
 {
     width: 100%;
     height: 100%;
@@ -50,7 +50,13 @@ body {
 	max-height: 1000px;       
 }
 
-.gmcKN_mono
+.gmcKN-errorMsg {
+    position: absolute;
+    z-index: 100;
+    background-color: #f00;
+}
+
+.gmcKN-mono
 {
     font-family:monospace; 
 }
@@ -78,11 +84,11 @@ body {
 }
 
 
-#gmcKN_zoomInfo
+#gmcKN-zoomInfo
 {    
 }
 
-#gmcKN_checkboxContainer
+#gmcKN-checkboxContainer
 {
     position: absolute;
     width:144px;    
@@ -100,7 +106,7 @@ body {
     padding: 0px;
 }
 
-#gmcKN_checkboxContainer input
+#gmcKN-checkboxContainer input
 {
     margin-top: 10px;
 }
@@ -132,6 +138,6 @@ body {
     white-space: nowrap;color:#fff;background:url(../Images/m5.png) no-repeat 0 0;width:90px;height:89px;
 }
 
-#gmcKN_Clustering_span {
+#gmcKN-Clustering-span {
     display: none;
 }

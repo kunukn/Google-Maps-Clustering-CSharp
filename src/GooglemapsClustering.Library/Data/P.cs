@@ -6,11 +6,9 @@ namespace GooglemapsClustering.Clustering.Data
 {
     /// <summary>
     /// Point class, overwrite it, modify it, extend it as you like
-    /// </summary>
-    //[Serializable]
-    public class P : PBase
-        //,                     IP
-        //,ISerializable                               // Json data
+    /// </summary>    
+    [Serializable]
+    public class P : PBase, ISerializable
     {
         public P()
         {            

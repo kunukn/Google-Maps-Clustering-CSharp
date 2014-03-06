@@ -9,8 +9,7 @@ namespace GooglemapsClustering.Clustering.Data.Json
     public class JsonGetMarkersReceive
     {
         // Data range are restricted if user abuse client side
-        private const int ZoomLevelMax = 30;                        
-        public int Sendid { get; private set; }
+        private const int ZoomLevelMax = 30;                                
         public Boundary Viewport { get; private set; }
 
         private int _zoomlevel;
@@ -33,11 +32,10 @@ namespace GooglemapsClustering.Clustering.Data.Json
         public bool IsDebugLinesEnabled { get; private set; }
         public HashSet<int> TypeFilterExclude { get; private set; }
 
-        public JsonGetMarkersReceive(double nelat, double nelon, double swlat, double swlon, int zoomlevel,string filter, int sendid)
+        public JsonGetMarkersReceive(double nelat, double nelon, double swlat, double swlon, int zoomlevel,string filter)
         {            
             Zoomlevel = zoomlevel;            
-            Sendid = sendid;
-
+            
             Viewport = new Boundary { Minx = swlon, Maxx = nelon, Miny = swlat, Maxy = nelat };
 
             // Parse filter

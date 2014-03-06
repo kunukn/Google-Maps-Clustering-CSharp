@@ -9,7 +9,7 @@ namespace GooglemapsClustering.Clustering.Data
     /// </summary>
     public static class MemoryDatabase
     {
-        private static bool _isLoaded = false;     
+        private static bool _isLoaded;     
         private static List<P> Points { get; set; }                
         private static string FilePath { get; set; }
         
