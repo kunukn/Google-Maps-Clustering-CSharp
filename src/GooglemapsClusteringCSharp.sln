@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GooglemapsClustering.Web", "GooglemapsClustering.Web\GooglemapsClustering.Web.csproj", "{4FBBCEFC-BBEA-40CF-B5AE-9A24ED0C802F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GooglemapsClustering.Library", "GooglemapsClustering.Library\GooglemapsClustering.Library.csproj", "{10CBE041-2E26-4CB1-A913-5F98F4A9801B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4FBBCEFC-BBEA-40CF-B5AE-9A24ED0C802F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FBBCEFC-BBEA-40CF-B5AE-9A24ED0C802F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FBBCEFC-BBEA-40CF-B5AE-9A24ED0C802F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FBBCEFC-BBEA-40CF-B5AE-9A24ED0C802F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10CBE041-2E26-4CB1-A913-5F98F4A9801B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10CBE041-2E26-4CB1-A913-5F98F4A9801B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10CBE041-2E26-4CB1-A913-5F98F4A9801B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10CBE041-2E26-4CB1-A913-5F98F4A9801B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
