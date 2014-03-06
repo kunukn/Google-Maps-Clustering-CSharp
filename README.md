@@ -1,4 +1,4 @@
-Google-Maps-Clustering-CSharp
+Google Maps Server-side Clustering with C#
 =============================
 
 todo update
