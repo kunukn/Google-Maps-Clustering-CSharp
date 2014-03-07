@@ -102,7 +102,7 @@ namespace GooglemapsClustering.Clustering.Service
             }
             catch (Exception ex)
             {
-                invalid.EMsg = string.Format("Parsing error param: {0}",
+                invalid.EMsg = string.Format("MapService says: exception {0}",
                     ex.Message);
                 return invalid;
             }
