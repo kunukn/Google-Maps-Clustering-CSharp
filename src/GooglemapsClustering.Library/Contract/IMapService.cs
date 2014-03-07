@@ -3,10 +3,9 @@
 namespace GooglemapsClustering.Clustering.Contract
 {
     public interface IMapService
-    {
-        JsonMarkersReply GetMarkers(string s);
-        JsonMarkersReply GetMarkers(JsonGetMarkersInput s);        
-        JsonMarkerInfoReply GetMarkerInfo(string s);
+    {        
+        JsonMarkersReply GetMarkers(JsonGetMarkersInput input);        
+        JsonMarkerInfoReply GetMarkerInfo(string id);
         JsonInfoReply Info();
     }
 }

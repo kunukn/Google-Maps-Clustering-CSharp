@@ -3,8 +3,8 @@
 }
 body {
      height: 100%; 
-     margin: 0px; 
-     padding: 0px
+     margin: 0;
+    padding: 0;
 }
 
 .ui-autocomplete {
@@ -12,7 +12,7 @@ body {
 	width: 410px;
 	border: 1px solid #cfcfcf;
 	list-style-type: none;
-	padding-left: 0px;
+	padding-left: 0;
 }
 
 #gmcKN_search
@@ -52,7 +52,7 @@ body {
 
 .gmcKN-errorMsg {
     position: absolute;
-    z-index: 100;
+    z-index: 10;
     background-color: #f00;
 }
 
@@ -68,25 +68,6 @@ body {
     font-family:monospace;
 }
 
-#gmcKN_longitude
-{
-    
-}
-
-#gmcKN_latitude
-{
-   
-}
-
-#gmcKN_btnLatLonSearch
-{
-   
-}
-
-
-#gmcKN-zoomInfo
-{    
-}
 
 #gmcKN-checkboxContainer
 {

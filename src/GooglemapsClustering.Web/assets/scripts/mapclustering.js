@@ -189,10 +189,10 @@ var gmcKN = {
 
 
                 var params = {
-                    nelat: gmcKN.dEscape(mapData.neLat),
-                    nelon: gmcKN.dEscape(mapData.neLon),
-                    swlat: gmcKN.dEscape(mapData.swLat),
-                    swlon: gmcKN.dEscape(mapData.swLon),
+                    nelat: mapData.neLat,
+                    nelon: mapData.neLon,
+                    swlat: mapData.swLat,
+                    swlon: mapData.swLon,
                     zoomLevel: mapData.zoomLevel,
                     filter: gmcKN.getFilterValues(),
                 };
@@ -319,8 +319,8 @@ var gmcKN = {
                             + "\nresponseText: " + xhr.responseText;
 
                         gmcKN.log(msg);
-                        $("#gmcKN-errorMsg").innerText = msg;
-                        alert(msg);                        
+                        document.getElementById("gmcKN-errorMsg").innerText = msg;                    
+                        //alert(msg);                        
                     }
                 });
 
@@ -350,8 +350,8 @@ var gmcKN = {
                             + xhr.responseText + "\nerr:" + err;
 
                         gmcKN.log(msg);
-                        $("#gmcKN-errorMsg").innerText = msg;
-                        alert(msg);                       
+                        $("#gmcKN-errorMsg").innerText = msg;                        
+                        //alert(msg);                       
                     }
                 });
             }
@@ -359,14 +359,9 @@ var gmcKN = {
     },
 
 
-    // lon, lat, count, type, cannot use id because it is not set for cluster markers on return json
+    // lon, lat, count, type
     getKey: function (p) {
         var s = p.X + "__" + p.Y + "__" + p.C + "__" + p.T;
-        return s.replace(/\./g, "_"); //replace . with _
-    },
-
-    dEscape: function (d) { //double escape
-        var s = d + "";
         return s.replace(/\./g, "_"); //replace . with _
     },
 

@@ -20,7 +20,7 @@ namespace GooglemapsClustering.Web.Controllers
         }
 
         public ContentResult GetMarkers(JsonGetMarkersInput input)
-        {            
+        {
             return JsonMin(_mapService.GetMarkers(input));
         }
 

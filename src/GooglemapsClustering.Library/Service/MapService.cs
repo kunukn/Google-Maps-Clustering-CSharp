@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using GooglemapsClustering.Clustering.Algorithm;
@@ -18,44 +17,16 @@ namespace GooglemapsClustering.Clustering.Service
             sw.Stop();
             return sw.Elapsed.ToString();
         }
-
-        static class Protocol
-        {
-            // markers
-            public const string nelat = "nelat";
-            public const string nelon = "nelon";
-            public const string swlat = "swlat";
-            public const string swlon = "swlon";
-            public const string zoomLevel = "zoomLevel";
-            public const string filter = "filter";
-            
-            // markerInfo
-            public const string id = "id";
-
-            public static readonly HashSet<string> MarkersReq = new HashSet<string>
-                                                     {
-                                                         nelat,
-                                                         nelon,
-                                                         swlat,
-                                                         swlon,
-                                                         zoomLevel,
-                                                     };
-
-            public static readonly HashSet<string> MarkerInfoReq = new HashSet<string>
-                                                     {
-                                                         id
-                                                     };
-        }
        
         public JsonMarkersReply GetMarkers(JsonGetMarkersInput input)
         {
             var invalid = new JsonMarkersReply { Ok = "0" };
             try
             {
-                var nelat = input.nelat.Replace("_", ".").ToDouble();
-                var nelon = input.nelon.Replace("_", ".").ToDouble();
-                var swlat = input.swlat.Replace("_", ".").ToDouble();
-                var swlon = input.swlon.Replace("_", ".").ToDouble();
+                var nelat = input.nelat.ToDouble();
+                var nelon = input.nelon.ToDouble();
+                var swlat = input.swlat.ToDouble();
+                var swlon = input.swlon.ToDouble();
                 var zoomLevel = int.Parse(input.zoomLevel);
                 var filter = input.filter ?? "";
 
@@ -136,48 +107,7 @@ namespace GooglemapsClustering.Clustering.Service
                 return invalid;
             }
         }
-
-        public JsonMarkersReply GetMarkers(string s)
-        {
-            var invalid = new JsonMarkersReply { Ok = "0" };
-
-            if (string.IsNullOrWhiteSpace(s))
-            {
-                invalid.EMsg = "MapService says: params is invalid";
-                return invalid;
-            }
-
-            var arr = s.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
      
-            var nvc = new NameValueCollection();
-            foreach (var a in arr)
-            {
-                var kv = a.Split(new[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
-                if (kv.Length != 2) continue;
-
-                nvc.Add(kv[0], kv[1]);
-            }
-
-            foreach (var key in Protocol.MarkersReq)
-            {
-                if (nvc[key] != null) continue;
-
-                invalid.EMsg = string.Format("MapService says: param {0} is missing", key);
-                return invalid;
-            }
-
-            return GetMarkers(new JsonGetMarkersInput
-            {
-                nelat = nvc[Protocol.nelat].Replace("_", "."),
-                nelon = nvc[Protocol.nelon].Replace("_", "."),
-                swlat = nvc[Protocol.swlat].Replace("_", "."),
-                swlon = nvc[Protocol.swlon].Replace("_", "."),
-                zoomLevel = nvc[Protocol.zoomLevel],
-                filter = nvc[Protocol.filter],
-            });                        
-        }
-
-        
         public JsonMarkerInfoReply GetMarkerInfo(string id)
         {
             var invalid = new JsonMarkerInfoReply { Ok = "0" };
@@ -205,10 +135,8 @@ namespace GooglemapsClustering.Clustering.Service
                     };
                 }
 
-                var reply = new JsonMarkerInfoReply {};
-
+                var reply = new JsonMarkerInfoReply();
                 reply.BuildContent(marker);
-
                 reply.Msec = Sw(sw);
                 return reply;                
             }
