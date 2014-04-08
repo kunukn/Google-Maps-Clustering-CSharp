@@ -1,6 +1,7 @@
 ﻿// Author: Kunuk Nykjaer et al.
-// jQuery and Google Maps library
+// Requires: jQuery and Google Maps library
 
+// gmcKN is the namespace
 var gmcKN = {
 
     markers: [], // markers on screen    
@@ -17,9 +18,7 @@ var gmcKN = {
     },
 
     log: function (s) {
-        if (console.log) {
-            console.log(s);
-        }
+        if (console.log) { console.log(s); }
     },
 
     round: function (num, decimals) {
@@ -41,7 +40,7 @@ var gmcKN = {
 
             var center = new google.maps.LatLng(gmcKN.mymap.settings.mapCenterLat, gmcKN.mymap.settings.mapCenterLon, true);
 
-            gmcKN.map = new google.maps.Map( document.getElementById('gmcKN-map'), {
+            gmcKN.map = new google.maps.Map(document.getElementById('gmcKN-map'), {
                 zoom: gmcKN.mymap.settings.zoomLevel,
                 center: center,
                 scrollwheel: true,
@@ -78,9 +77,9 @@ var gmcKN = {
                     document.getElementById('gmcKN-Clustering-span').style.display = "block";
                 }
             });
-            
+
             // trigger first time event to draw points on map on init
-            google.maps.event.trigger(gmcKN.map, 'zoom_changed'); 
+            google.maps.event.trigger(gmcKN.map, 'zoom_changed');
         },
         settings: {
             // default display values
@@ -138,16 +137,16 @@ var gmcKN = {
                 width: 32,
                 offsetH: 0,
                 offsetW: 0
-            }           
+            }
         },
 
         events: {
             getBounds: function () {
 
-                var bounds = gmcKN.map.getBounds();
-                var NE = bounds.getNorthEast();
-                var SW = bounds.getSouthWest();
-                var mapData = [];
+                var bounds = gmcKN.map.getBounds()
+                , NE = bounds.getNorthEast()
+                , SW = bounds.getSouthWest()
+                , mapData = [];
                 mapData.neLat = gmcKN.round(NE.lat(), 7);
                 mapData.neLon = gmcKN.round(NE.lng(), 7);
                 mapData.swLat = gmcKN.round(SW.lat(), 7);
@@ -196,7 +195,7 @@ var gmcKN = {
                     zoomLevel: mapData.zoomLevel,
                     filter: gmcKN.getFilterValues(),
                 };
-                
+
                 $.ajax({
                     type: 'GET',
                     url: gmcKN.mymap.settings.jsonGetMarkersUrl,
@@ -225,12 +224,12 @@ var gmcKN = {
 
                         if (gmcKN.debug.showGridLines === true && data.Polylines) {
                             $.each(data.Polylines, function () {
-                                var item = this;
-                                var x = item.X;
-                                var y = item.Y;
-                                var x2 = item.X2;
-                                var y2 = item.Y2;
-                                var nowrapIsFalse = false;
+                                var item = this
+                                , x = item.X
+                                , y = item.Y
+                                , x2 = item.X2
+                                , y2 = item.Y2
+                                , nowrapIsFalse = false;
 
                                 // Creating the polyline object
                                 var polyline = new google.maps.Polyline({
@@ -319,8 +318,7 @@ var gmcKN = {
                             + "\nresponseText: " + xhr.responseText;
 
                         gmcKN.log(msg);
-                        document.getElementById("gmcKN-errorMsg").innerText = msg;                    
-                        //alert(msg);                        
+                        document.getElementById("gmcKN-errorMsg").innerText = msg;
                     }
                 });
 
@@ -328,7 +326,8 @@ var gmcKN = {
 
             // marker detail
             popupWindow: function (marker, item) {
-                             
+
+                // jQuery
                 $.ajax({
                     type: 'GET',
                     url: gmcKN.mymap.settings.jsonGetMarkerInfoUrl,
@@ -350,8 +349,7 @@ var gmcKN = {
                             + xhr.responseText + "\nerr:" + err;
 
                         gmcKN.log(msg);
-                        $("#gmcKN-errorMsg").innerText = msg;                        
-                        //alert(msg);                       
+                        $("#gmcKN-errorMsg").innerText = msg;
                     }
                 });
             }
@@ -367,16 +365,16 @@ var gmcKN = {
 
     // Checkbox values as binary sum
     getFilterValues: function () {
-        var s = "";
-        var cb1 = $(s = '#gmcKN-Clustering') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-        var cb2 = $(s = '#gmcKN-Lines') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-        var cb3 = $(s = '#gmcKN-Type1') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-        var cb4 = $(s = '#gmcKN-Type2') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-        var cb5 = $(s = '#gmcKN-Type3') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-        var cb6 = $(s = '#gmcKN_Type4') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-        var cb7 = $(s = '#gmcKN_Type5') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-        var cb8 = $(s = '#gmcKN_Type6') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-        var cb9 = $(s = '#gmcKN_Type7') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
+        var s = ""
+        , cb1 = $(s = '#gmcKN-Clustering') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+        , cb2 = $(s = '#gmcKN-Lines') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+        , cb3 = $(s = '#gmcKN-Type1') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+        , cb4 = $(s = '#gmcKN-Type2') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+        , cb5 = $(s = '#gmcKN-Type3') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+        , cb6 = $(s = '#gmcKN_Type4') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+        , cb7 = $(s = '#gmcKN_Type5') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+        , cb8 = $(s = '#gmcKN_Type6') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+        , cb9 = $(s = '#gmcKN_Type7') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
 
         // binary sum, take less space in string request
         var filter = cb1 * 1 + cb2 * 2 + cb3 * 4 + cb4 * 8
@@ -412,85 +410,75 @@ var gmcKN = {
 
     // Only update new markers not currently drawn and remove obsolete markers on screen
     dynamicUpdateMarkers: function (markers, cache, keyfunction, isclusterbased) {
-        var markersCacheIncome = []; // points to be drawn, new points received
-        var markersCacheOnMap = [];  // current drawn points
-        var p;
-        var key;
+        var markersCacheIncome = [] // points to be drawn, new points received
+        , markersCacheOnMap = []  // current drawn points
+        , p
+        , key
+        , i;
 
         // points to be displayed, diff of markersCacheIncome and markersCacheOnMap
         var markersDrawTodo = [];
 
-        // store new points to be drawn                  
-        for (i in markers) {
-            if (markers.hasOwnProperty(i)) {
-                p = markers[i];
-                key = keyfunction(p); //key                            
-                markersCacheIncome[key] = p;
-            }
+        // store new points to be drawn       
+        for (i = 0; i < markers.length; i++) {
+            p = markers[i];
+            key = keyfunction(p); //key                            
+            markersCacheIncome[key] = p;
         }
-        // store current existing valid markers
-        for (i in cache) {
-            if (cache.hasOwnProperty(i)) {
-                m = cache[i];
-                key = m.get("key"); // key  
-                if (key !== 0) { // 0 is used as has been deleted
-                    markersCacheOnMap[key] = 1;
-                }
 
-                if (key === undefined) {
-                    gmcKN.log("error in code: key"); // catch error in code
-                }
+        // store current existing valid markers
+        for (i = 0; i < cache.length; i++) {
+            m = cache[i];
+            key = m.get("key"); // key  
+            if (key !== 0) { // 0 is used as has been deleted
+                markersCacheOnMap[key] = 1;
+            }
+            if (key === undefined) {
+                gmcKN.log("error in code: key"); // catch error in code
             }
         }
 
         // add new markers from event not already drawn
-        for (var i in markers) {
-            if (markers.hasOwnProperty(i)) {
-                p = markers[i];
-                key = keyfunction(p); //key                            
-                if (markersCacheOnMap[key] === undefined) {
-                    if (markersCacheIncome[key] === undefined) {
-                        gmcKN.log("error in code: key2"); //catch error in code
-                    }
-                    var newmarker = markersCacheIncome[key];
-                    markersDrawTodo.push(newmarker);
+        for (i = 0; i < markers.length; i++) {
+            p = markers[i];
+            key = keyfunction(p); //key                            
+            if (markersCacheOnMap[key] === undefined) {
+                if (markersCacheIncome[key] === undefined) {
+                    gmcKN.log("error in code: key2"); //catch error in code
                 }
+                var newmarker = markersCacheIncome[key];
+                markersDrawTodo.push(newmarker);
             }
         }
 
         // remove current markers which should not be displayed
-        for (i in cache) {
-            if (cache.hasOwnProperty(i)) {
-                var m = cache[i];
-                key = m.get("key"); //key                            
-                if (key !== 0 && markersCacheIncome[key] === undefined) {
-                    if (isclusterbased === true) {
-                        $(".countinfo_" + key).remove();
-                    }
-                    cache[i].set("key", 0); // mark as deleted
-                    cache[i].setMap(null); // this removes the marker from the map
+        for (i = 0; i < cache.length; i++) {
+            var m = cache[i];
+            key = m.get("key"); //key                            
+            if (key !== 0 && markersCacheIncome[key] === undefined) {
+                if (isclusterbased === true) {
+                    $(".countinfo_" + key).remove();
                 }
+                cache[i].set("key", 0); // mark as deleted
+                cache[i].setMap(null); // this removes the marker from the map
             }
         }
 
         // trim markers array size
         var temp = [];
-        for (i in cache) {
-            if (cache.hasOwnProperty(i)) {
-                key = cache[i].get("key"); //key                            
-                if (key !== 0) {
-                    tempItem = cache[i];
-                    temp.push(tempItem);
-                }
+        for (i = 0; i < cache.length; i++) {
+            key = cache[i].get("key"); //key                            
+            if (key !== 0) {
+                tempItem = cache[i];
+                temp.push(tempItem);
             }
         }
 
-        cache.length = 0;
-        for (i in temp) {
-            if (temp.hasOwnProperty(i)) {
-                var tempItem = temp[i];
-                cache.push(tempItem);
-            }
+        cache.length = 0; // reset
+
+        for (i = 0; i < temp.length; i++) {
+            var tempItem = temp[i];
+            cache.push(tempItem);
         }
 
         // clear array
