@@ -1,4 +1,7 @@
-﻿// Author: Kunuk Nykjaer et al.
+﻿/// <reference path="jquery.min.js" />
+/// <reference path="http://maps.google.com/maps/api/js?sensor=false" />
+
+// Author: Kunuk Nykjaer et al.
 // Requires: jQuery and Google Maps library
 
 var gmcKN; // global var
@@ -93,7 +96,7 @@ var gmcKN; // global var
                 jsonGetMarkerInfoUrl: '/json/GetMarkerInfo',
 
                 clusterImage: {
-                    src: 'assets/images/cluster2.png', // this is invisible img only used for click-event detecting
+                    src: 'assets/images/clusters/cluster2.png', // this is invisible img only used for click-event detecting
                     height: 60,
                     width: 60,
                     offsetH: 30,
@@ -101,7 +104,7 @@ var gmcKN; // global var
                 },
 
                 pinImage: {
-                    src: 'assets/images/pin24.png', //default unknown marker
+                    src: 'assets/images/markers/pin24.png', //default unknown marker
                     height: 24,
                     width: 24,
                     offsetH: 0,

@@ -20,9 +20,9 @@ namespace GooglemapsClustering.Clustering.Data.Json
             Lat = p.Lat;
             Lon = p.Lon;
 
-            var sb = new StringBuilder();            
-            sb.AppendLine("<div>");            
-            sb.AppendFormat("Time: {0}<br/>",DateTime.Now);
+            var sb = new StringBuilder();
+			sb.AppendLine("<div class='gmcKN-marker-info'>");            
+            sb.AppendFormat("Time: {0}<br/>",DateTime.Now.ToString("HH:mm:ss"));
             sb.AppendFormat("Id: {0}<br /> Type: {1}<br />", Id, Type);
             sb.AppendFormat("Lat: {0} Lon: {1}", p.Lat, p.Lon);
             sb.AppendLine("</div>");

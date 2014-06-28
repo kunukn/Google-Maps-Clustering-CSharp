@@ -5,7 +5,7 @@
         public string Msec { get; set; } // server-time msec             
         public string Ok { get; set; } // operation result
         public string EMsg { get; set; } // error message        
-        public string Debug { get; set; }
+        public string Debug { get; set; }  // info for developer
 
         protected JsonReplyBase()
         {            

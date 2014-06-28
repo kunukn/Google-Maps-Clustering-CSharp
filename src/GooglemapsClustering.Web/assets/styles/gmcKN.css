@@ -110,7 +110,7 @@ body {
     top: -26px;
     line-height: 52px;
     font-size: 12px;
-    background: url(../Images/m1.png) no-repeat 0 0;
+    background: url(../Images/clusters/m1.png) no-repeat 0 0;
     width: 53px;
     height: 52px;
 }
@@ -120,7 +120,7 @@ body {
     top: -28px;
     line-height: 55px;
     font-size: 12px;
-    background: url(../Images/m2.png) no-repeat 0 0;
+    background: url(../Images/clusters/m2.png) no-repeat 0 0;
     width: 56px;
     height: 55px;
 }
@@ -130,7 +130,7 @@ body {
     top: -33px;
     line-height: 65px;
     font-size: 12px;
-    background: url(../Images/m3.png) no-repeat 0 0;
+    background: url(../Images/clusters/m3.png) no-repeat 0 0;
     width: 66px;
     height: 65px;
 }
@@ -141,7 +141,7 @@ body {
     text-align: center;
     line-height: 77px;
     font-size: 12px;
-    background: url(../Images/m4.png) no-repeat 0 0;
+    background: url(../Images/clusters/m4.png) no-repeat 0 0;
     width: 78px;
     height: 77px;
 }
@@ -151,11 +151,22 @@ body {
     top: -45px;
     line-height: 89px;
     font-size: 12px;
-    background: url(../Images/m5.png) no-repeat 0 0;
+    background: url(../Images/clusters/m5.png) no-repeat 0 0;
     width: 90px;
     height: 89px;
 }
 
 #gmcKN-Clustering-span {
     display: none;
+}
+
+.gmcKN-marker-info {
+    -moz-min-width: 200px;
+    -ms-min-width: 200px;
+    -o-min-width: 200px;
+    -webkit-min-width: 200px;
+    min-width: 200px;
+    min-height: 100px;    
+    margin: 0;
+    padding: 0;  
 }
