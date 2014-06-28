@@ -16,8 +16,8 @@ namespace GooglemapsClustering.Test
 	public class UnitTest1
 	{
 		static Bootstrap bootstrap;
-		static IMemoryDatabase memoryDatabase = null;	 // only loading from file once, thus static
-		IMapService mapService = null;
+		static IMemoryDatabase memoryDatabase; // only loading points from file once, thus static
+		IMapService mapService;
 
 		[TestInitialize()]
 		public void Initialize()
