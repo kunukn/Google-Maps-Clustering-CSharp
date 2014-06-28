@@ -3,43 +3,63 @@
 <head>
     <title>Google Maps Server-side Clustering</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />    
-    <link type="text/css" rel="stylesheet" href="~/assets/Styles/Gmc.css?v=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link type="text/css" rel="stylesheet" href="~/assets/styles/gmcKN.css?v=1" />
 </head>
-    <body>
-        <div id="gmcKN-errorMsg"></div>
 
-        <div id="gmcKN-map-container">
+<!--
+    Plain html example page
+    -->
 
-            <div id="gmcKN-map"></div>
+<body>
+    <div id="gmcKN-errorMsg"></div>
 
-            <div id="gmcKN-checkboxContainer">
-                <!--
-                    <input type="button" value="ZoomIn" onclick="gmcKN.zoomIn();" class="inputZoom" />&nbsp;&nbsp;
-                    <input type="button" value="ZoomOut" onclick="gmcKN.zoomOut();"  class="inputZoom" />
-                    <br />
-                    -->
-                <input type="checkbox" id="gmcKN-Type1" name="Type" value="Type1" onclick="gmcKN.checkboxClicked('gmc_type1',this.checked+'');" checked />Type 1<br />
-                <input type="checkbox" id="gmcKN-Type2" name="Type" value="Type2" onclick="gmcKN.checkboxClicked('gmc_type2',this.checked+'');" checked />Type 2<br />
-                <input type="checkbox" id="gmcKN-Type3" name="Type" value="Type3" onclick="gmcKN.checkboxClicked('gmc_type3',this.checked+'');" checked />Type 3<br />
-                <input type="checkbox" id="gmcKN-Lines" name="Type" value="Lines" onclick="gmcKN.checkboxClicked('gmc_meta_lines',this.checked+'');" />
-                <span>Lines</span>
-                <br />
-                <span id="gmcKN-Clustering-span">
-                    <input type="checkbox" id="gmcKN-Clustering" name="Type" value="Clustering" onclick="gmcKN.checkboxClicked('gmc_clustering',this.checked+'');" checked />
-                    Clustering
-                </span>
-                <br />
-                <span id="gmcKN-zoomInfo" class="gmcKN-mono"></span><br />
-                <span id="gmcKN-markersCount" class="gmcKN-mono"></span>
-            </div>
+    <div id="gmcKN-map-container">
+
+        <div id="gmcKN-map"></div>
+
+        <div id="gmcKN-checkboxContainer">
+                  
+            <!--
+                <input type="button" id="gmcKN-zoomIn" value="ZoomIn" onclick="gmcKN.zoomIn();" class="inputZoom" />
+                <input type="button" id="gmcKN-zoomOut" value="ZoomOut" onclick="gmcKN.zoomOut();" class="inputZoom" />
+                <br />  
+                -->
+                                
+                <!-- These id values are used by the js for filtering data request -->
+            <input type="checkbox" id="gmcKN-Type1" name="Type" value="Type1" checked="checked" />Type 1<br />
+            <input type="checkbox" id="gmcKN-Type2" name="Type" value="Type2" checked="checked" />Type 2<br />
+            <input type="checkbox" id="gmcKN-Type3" name="Type" value="Type3" checked="checked" />Type 3<br />
+            <input type="checkbox" id="gmcKN-Lines" name="Type" value="Lines" />
+            <span>Lines</span>
+            <br />
+            <span id="gmcKN-Clustering-span">
+                <input type="checkbox" id="gmcKN-Clustering" name="Type" value="Clustering" checked="checked" />
+                Clustering
+            </span>
+            <br />
+            <span id="gmcKN-zoomInfo"></span><br />
+            <span id="gmcKN-markersCount"></span>
         </div>
+    </div>
 
 
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>    
-        <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-        <script type="text/javascript" src="~/assets/scripts/mapclustering.js?v=1"></script>
+    <script type="text/javascript" src="~/assets/scripts/jquery.min.js"></script>   <!-- jQuery -->
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>   <!-- Google Maps -->
+    <script type="text/javascript" src="~/assets/scripts/gmcKN.js?v=1"></script>  <!-- Clustering -->
 
-    </body>
+    <script>
+        (function ($) {
+
+            $('#gmcKN-Type1').click(function () { gmcKN.checkboxClicked('gmc_type1'); });
+            $('#gmcKN-Type2').click(function () { gmcKN.checkboxClicked('gmc_type2'); });
+            $('#gmcKN-Type3').click(function () { gmcKN.checkboxClicked('gmc_type3'); });
+            $('#gmcKN-Lines').click(function () { gmcKN.checkboxClicked('gmc_meta_lines'); });
+            $('#gmcKN-Clustering').click(function () { gmcKN.checkboxClicked('gmc_clustering'); });
+
+        })(jQuery);
+    </script>
+
+</body>
 </html>
 

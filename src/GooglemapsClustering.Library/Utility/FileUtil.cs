@@ -11,7 +11,7 @@ namespace GooglemapsClustering.Clustering.Utility
     /// </summary>
     public static class FileUtil
     {
-        private static readonly Action<object> WL = Console.WriteLine;
+        private static readonly Action<object> CW = Console.WriteLine;
 
         public const string FolderPath = @"c:\temp\";
         private static readonly Encoding EncodingRead = Encoding.Default; // Encoding.Default  Encoding.UTF8  Encoding.Unicode      
@@ -21,7 +21,7 @@ namespace GooglemapsClustering.Clustering.Utility
         /// folder path is created if not exists
         /// </summary>
         public static bool WriteFile(List<string> data, FileInfo fileInfo)
-        {
+        {	        
             var sb = new StringBuilder();
             var i = 0;
             var len = data.Count;
@@ -53,8 +53,8 @@ namespace GooglemapsClustering.Clustering.Utility
             }
             catch (Exception ex)
             {
-                WL(ExceptionUtil.GetException(ex));
-                WL("\nPress a key ... ");
+                CW(ExceptionUtil.GetException(ex));
+                CW("\nPress a key ... ");
                 Console.ReadKey();
             }
 
@@ -77,8 +77,8 @@ namespace GooglemapsClustering.Clustering.Utility
             }
             catch (Exception ex)
             {
-                WL(ExceptionUtil.GetException(ex));
-                WL("\nPress a key ... ");
+                CW(ExceptionUtil.GetException(ex));
+                CW("\nPress a key ... ");
                 Console.ReadKey();
                 return false;
             }            
@@ -126,8 +126,8 @@ namespace GooglemapsClustering.Clustering.Utility
             }
             catch (Exception ex)
             {
-                WL(ExceptionUtil.GetException(ex));
-                WL("\nPress a key ... ");
+                CW(ExceptionUtil.GetException(ex));
+                CW("\nPress a key ... ");
                 throw;
             }
 

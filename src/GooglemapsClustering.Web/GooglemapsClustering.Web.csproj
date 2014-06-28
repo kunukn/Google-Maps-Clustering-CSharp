@@ -121,11 +121,10 @@
     <Content Include="assets\images\markers\firstaid.png" />
     <Content Include="assets\images\markers\house.png" />
     <Content Include="assets\images\markers\link.txt" />
-    <Content Include="assets\images\mm_20_red.png" />
     <Content Include="assets\images\pin24.png" />
-    <Content Include="assets\scripts\jquery-ui.min.js" />
-    <Content Include="assets\scripts\mapclustering.js" />
-    <Content Include="assets\styles\Gmc.css" />
+    <Content Include="assets\scripts\jquery.min.js" />
+    <Content Include="assets\scripts\gmcKN.js" />
+    <Content Include="assets\styles\gmcKN.css" />
     <Content Include="assets\styles\jquery-ui.css" />
     <Content Include="Global.asax" />
     <Content Include="Web.config" />
@@ -138,6 +137,7 @@
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Config\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>

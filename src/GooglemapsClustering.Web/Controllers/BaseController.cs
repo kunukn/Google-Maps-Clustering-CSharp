@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace GooglemapsClustering.Web.Controllers
 {
-    public class BaseController : Controller
+    public abstract class BaseController : Controller
     {     
         public ContentResult JsonMin(object o)
         {            
@@ -15,7 +15,8 @@ namespace GooglemapsClustering.Web.Controllers
             }
             catch (Exception ex)
             {
-                return Content(GetJsonDefault(new { Exception = ex.StackTrace }), "application/json", new UTF8Encoding());
+                return Content(GetJsonDefault(new { Exception = ex.StackTrace }), 
+					"application/json", new UTF8Encoding());
             }
         }
         public ContentResult JsonDefault(object o)
@@ -26,7 +27,8 @@ namespace GooglemapsClustering.Web.Controllers
             }
             catch (Exception ex)
             {
-                return Content(GetJsonDefault(new { Exception = ex.StackTrace }), "application/json", new UTF8Encoding());
+                return Content(GetJsonDefault(new { Exception = ex.StackTrace }), 
+					"application/json", new UTF8Encoding());
             }
         }
 

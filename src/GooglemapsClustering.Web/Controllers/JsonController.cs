@@ -8,15 +8,24 @@ namespace GooglemapsClustering.Web.Controllers
     public class JsonController : BaseController
     {
         private readonly IMapService _mapService; // Clustering API
+				
+		public JsonController()
+		{
+			_mapService = new MapService();
+		}
 
-        public JsonController()
-        {
-            _mapService = new MapService();
-        }
+		/// <summary>
+		/// IoC
+		/// </summary>
+		/// <param name="mapService"></param>
+		public JsonController(IMapService mapService)
+		{
+			_mapService = mapService;
+		}
 
-        public JsonResult Index()
+		public ContentResult Index()
         {
-            return Json("json service", JsonRequestBehavior.AllowGet);
+			return JsonDefault("json service");
         }
 
         public ContentResult GetMarkers(JsonGetMarkersInput input)
