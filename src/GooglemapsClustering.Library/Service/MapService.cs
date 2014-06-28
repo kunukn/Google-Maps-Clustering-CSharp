@@ -12,11 +12,17 @@ namespace GooglemapsClustering.Clustering.Service
 {
     public class MapService : IMapService
     {
+	    private readonly IMemoryDatabase _memoryDatabase;
         static string Sw(Stopwatch sw)
         {
             sw.Stop();
             return sw.Elapsed.ToString();
         }
+
+		public MapService(IMemoryDatabase memoryDatabase)
+		{
+			_memoryDatabase = memoryDatabase;
+		}
        
         public JsonMarkersReply GetMarkers(JsonGetMarkersInput input)
         {
@@ -45,7 +51,7 @@ namespace GooglemapsClustering.Clustering.Service
                 jsonReceive.Viewport.Normalize();
 
                 // Get all points from memory
-                List<P> points = MemoryDatabase.GetPoints();
+				IList<P> points = _memoryDatabase.GetPoints();
 
                 if (jsonReceive.TypeFilterExclude.Count == AlgoConfig.Get.MarkerTypes.Count)
                 {
@@ -124,7 +130,7 @@ namespace GooglemapsClustering.Clustering.Service
 
                 var uid = int.Parse(id);
 
-                var marker = MemoryDatabase.GetPoints().SingleOrDefault(i => i.I == uid); // O(n)
+				var marker = _memoryDatabase.GetPoints().SingleOrDefault(i => i.I == uid); // O(n)
                 if (marker == null)
                 {
                     return new JsonMarkerInfoReply
@@ -154,8 +160,8 @@ namespace GooglemapsClustering.Clustering.Service
         {
             return new JsonInfoReply
             {
-                DbSize = MemoryDatabase.GetPoints().Count,
-                FirstPoint = MemoryDatabase.GetPoints().FirstOrDefault()
+				DbSize = _memoryDatabase.GetPoints().Count,
+				FirstPoint = _memoryDatabase.GetPoints().FirstOrDefault()
             };
             
         } 

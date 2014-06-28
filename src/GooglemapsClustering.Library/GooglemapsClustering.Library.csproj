@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Algorithm\ClusterAlgorithmBase.cs" />
     <Compile Include="Algorithm\GridCluster.cs" />
+    <Compile Include="Contract\IMemoryDatabase.cs" />
     <Compile Include="Contract\IMapService.cs" />
     <Compile Include="Data\AlgoConfig.cs" />
     <Compile Include="Data\Boundary.cs" />
@@ -66,7 +67,6 @@
     <Compile Include="Utility\Dataset.cs" />
     <Compile Include="Utility\ExceptionUtil.cs" />
     <Compile Include="Utility\FileUtil.cs" />
-    <Compile Include="Utility\GmcInit.cs" />
     <Compile Include="Utility\MathTool.cs" />
     <Compile Include="Utility\Serializer.cs" />
     <Compile Include="Service\MapService.cs" />

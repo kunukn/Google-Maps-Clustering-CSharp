@@ -1,7 +1,7 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 using GooglemapsClustering.Clustering.Contract;
 using GooglemapsClustering.Clustering.Data.Json;
-using GooglemapsClustering.Clustering.Service;
 
 namespace GooglemapsClustering.Web.Controllers
 {
@@ -11,7 +11,7 @@ namespace GooglemapsClustering.Web.Controllers
 				
 		public JsonController()
 		{
-			_mapService = new MapService();
+			throw new Exception("IoC error");
 		}
 
 		/// <summary>

@@ -63,7 +63,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
 
         public List<Line> Lines { get; private set; }
 
-        public GridCluster(List<P> dataset, JsonGetMarkersReceive jsonReceive)
+        public GridCluster(IList<P> dataset, JsonGetMarkersReceive jsonReceive)
             : base(dataset)
         {
             // Important, set _delta and _grid values in constructor as first step
@@ -280,7 +280,7 @@ then the longitudes from 170 to -170 will be clustered together
         public List<P> RunClusterAlgo(ClusterInfo clusterInfo)
         {                        
             // Skip points outside the grid
-            List<P> filtered = clusterInfo.IsFilterData ? FilterDataset(Dataset, Grid) : Dataset;
+            IList<P> filtered = clusterInfo.IsFilterData ? FilterDataset(Dataset, Grid) : Dataset;
                         
             // Put points in buckets
             foreach (var p in filtered)

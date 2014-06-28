@@ -11,13 +11,13 @@ namespace GooglemapsClustering.Clustering.Algorithm
     /// </summary>
     public abstract class ClusterAlgorithmBase
     {        
-        protected readonly List<P> Dataset; // all points
+        protected readonly IList<P> Dataset; // all points
         //id, bucket
         public readonly Dictionary<string, Bucket> BucketsLookup =
             new Dictionary<string, Bucket>();
 
         protected ClusterAlgorithmBase() { }
-        protected ClusterAlgorithmBase(List<P> dataset)
+        protected ClusterAlgorithmBase(IList<P> dataset)
         {
             if (dataset == null)
             {
@@ -56,7 +56,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
         }
 
         // O(n), could be O(logn-ish) using range search or similar, no problem when points are <500.000
-        public static List<P> FilterDataset(List<P> dataset, Boundary viewport)
+        public static List<P> FilterDataset(IList<P> dataset, Boundary viewport)
         {            
             return dataset.Where(i => MathTool.IsInside(viewport, i)).ToList();
         }

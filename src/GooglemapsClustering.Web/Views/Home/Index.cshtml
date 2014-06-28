@@ -19,14 +19,8 @@
         <div id="gmcKN-map"></div>
 
         <div id="gmcKN-checkboxContainer">
-                  
-            <!--
-                <input type="button" id="gmcKN-zoomIn" value="ZoomIn" onclick="gmcKN.zoomIn();" class="inputZoom" />
-                <input type="button" id="gmcKN-zoomOut" value="ZoomOut" onclick="gmcKN.zoomOut();" class="inputZoom" />
-                <br />  
-                -->
-                                
-                <!-- These id values are used by the js for filtering data request -->
+           
+            <!-- These id values are used by the js for filtering data request -->
             <input type="checkbox" id="gmcKN-Type1" name="Type" value="Type1" checked="checked" />Type 1<br />
             <input type="checkbox" id="gmcKN-Type2" name="Type" value="Type2" checked="checked" />Type 2<br />
             <input type="checkbox" id="gmcKN-Type3" name="Type" value="Type3" checked="checked" />Type 3<br />
@@ -58,6 +52,52 @@
             $('#gmcKN-Clustering').click(function () { gmcKN.checkboxClicked('gmc_clustering'); });
 
         })(jQuery);
+    </script>         
+    
+    <script>  
+        // http://css-tricks.com/snippets/jquery/draggable-without-jquery-ui/
+        (function ($) {
+            $.fn.drags = function(opt) {
+                opt = $.extend({ handle: "", cursor: "move" }, opt);
+
+                if (opt.handle === "") {
+                    var $el = this;
+                } else {
+                    var $el = this.find(opt.handle);
+                }
+
+                return $el.css('cursor', opt.cursor).on("mousedown", function(e) {
+                    if (opt.handle === "") {
+                        var $drag = $(this).addClass('draggable');
+                    } else {
+                        var $drag = $(this).addClass('active-handle').parent().addClass('draggable');
+                    }
+                    var z_idx = $drag.css('z-index'),
+                        drg_h = $drag.outerHeight(),
+                        drg_w = $drag.outerWidth(),
+                        pos_y = $drag.offset().top + drg_h - e.pageY,
+                        pos_x = $drag.offset().left + drg_w - e.pageX;
+                    $drag.css('z-index', 1000).parents().on("mousemove", function(e) {
+                        $('.draggable').offset({
+                            top: e.pageY + pos_y - drg_h,
+                            left: e.pageX + pos_x - drg_w
+                        }).on("mouseup", function() {
+                            $(this).removeClass('draggable').css('z-index', z_idx);
+                        });
+                    });
+                    e.preventDefault(); // disable selection
+                }).on("mouseup", function() {
+                    if (opt.handle === "") {
+                        $(this).removeClass('draggable');
+                    } else {
+                        $(this).removeClass('active-handle').parent().removeClass('draggable');
+                    }
+                });                             
+            };
+
+            $('#gmcKN-checkboxContainer').drags();
+        })(jQuery);
+
     </script>
 
 </body>
