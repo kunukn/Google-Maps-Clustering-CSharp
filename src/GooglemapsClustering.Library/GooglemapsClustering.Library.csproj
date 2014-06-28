@@ -63,6 +63,7 @@
     <Compile Include="Data\P.cs" />
     <Compile Include="Data\PBase.cs" />
     <Compile Include="Data\Rectangle.cs" />
+    <Compile Include="Data\ThreadData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\DataExtensions.cs" />
     <Compile Include="Utility\Dataset.cs" />

@@ -13,61 +13,109 @@ namespace GooglemapsClustering.Clustering.Data
 	{
 		public readonly string FilePath;
 		public readonly TimeSpan LoadTime;
-		public readonly IList<P> AllPoints;
-		private readonly int _threads;
-
+		public readonly ThreadData ThreadData;
+		private readonly object _lock = new object();
 
 		public IList<P> GetPoints()
 		{
-			return AllPoints;
+			return ThreadData.Points;
+		}
+
+		public IList<P>[] GetThreadPoints()
+		{
+			return ThreadData.ThreadPoints;
+		}
+
+		public ThreadData GetThreadData()
+		{
+			return this.ThreadData;
 		}
 
 		public int Threads
 		{
-			get { return _threads; }
+			get { return ThreadData.Threads; }
 		}
 
 		public MemoryDatabase(string filepath, int threads)
 		{
-			var sw = new Stopwatch();
-			sw.Start();
-
-			FilePath = filepath;
-			_threads = threads;			 
-
-			// Load from file
-			List<P> points = Utility.Dataset.LoadDataset(FilePath);
-			if (!points.Any())
+			lock (_lock)
 			{
-				throw new Exception(string.Format("Data was not loaded from file: {0}", FilePath));
+				var sw = new Stopwatch();
+				sw.Start();
+
+				ThreadData = new ThreadData(threads);
+				FilePath = filepath;
+
+				// Load from file
+				List<P> points = Utility.Dataset.LoadDataset(FilePath);
+				if (!points.Any())
+				{
+					throw new Exception(string.Format("Data was not loaded from file: {0}", FilePath));
+				}
+
+				if (points.Count > AlgoConfig.Get.MaxPointsInCache)
+				{
+					points = points.Take(AlgoConfig.Get.MaxPointsInCache).ToList();
+				}
+
+				// Not important, can be deleted, only for ensuring visual randomness of marker display 
+				// when not all can be displayed on screen
+				//
+				// Randomize order, when limit take is used for max marker display
+				// random locations are selected			
+				var rand = new Random();
+				var c = points.Count;
+				for (var i = 0; i < c; i++)
+				{
+					var a = rand.Next(c);
+					var b = rand.Next(c);
+					var temp = points[a];
+					points[a] = points[b];
+					points[b] = temp;
+				}
+
+				var llist = new LinkedList<P>();
+				points.ForEach(p => llist.AddLast(p));
+
+				ThreadData.Points = points.AsReadOnly();
+
+				// Thread related data
+				// Data are partitioned evenly to be used by the individual threads 
+				var delta = points.Count / Threads;
+				ThreadData.ThreadPoints = new IList<P>[Threads];
+
+				// Divide all the points evenly to the array of pointlist
+				for (int i = 0; i < Threads; i++)
+				{
+					ThreadData.ThreadPoints[i] = new List<P>();
+					for (int j = 0; j < delta; j++)
+					{
+						var p = llist.First();
+						llist.RemoveFirst();
+						ThreadData.ThreadPoints[i].Add(p);
+					}
+				}
+
+				// Add remaining points to last array
+				while (llist.Any())
+				{
+					var p = llist.First();
+					llist.RemoveFirst();
+					ThreadData.ThreadPoints.Last().Add(p);
+				}
+
+				// Readonly array
+				for (int i = 0; i < Threads; i++)
+				{
+					if (ThreadData.ThreadPoints[i] is List<P>)
+					{
+						ThreadData.ThreadPoints[i] = (ThreadData.ThreadPoints[i] as List<P>).AsReadOnly();
+					}
+				}
+
+				sw.Stop();
+				LoadTime = sw.Elapsed;
 			}
-
-			if (points.Count > AlgoConfig.Get.MaxPointsInCache)
-			{
-				points = points.Take(AlgoConfig.Get.MaxPointsInCache).ToList();
-			}
-
-			// Not important, can be deleted, only for ensuring visual randomness of marker display 
-			// when not all can be displayed on screen
-			//
-			// Randomize order, when limit take is used for max marker display
-			// random locations are selected			
-			var rand = new Random();
-			var c = points.Count;
-			for (var i = 0; i < c; i++)
-			{
-				//var p = points[i]; // do something with each p ?        
-				var a = rand.Next(c);
-				var b = rand.Next(c);
-				var temp = points[a];
-				points[a] = points[b];
-				points[b] = temp;
-			}
-
-			AllPoints = points.AsReadOnly();
-
-			sw.Stop();
-			LoadTime = sw.Elapsed;
 		}
 	}
 }

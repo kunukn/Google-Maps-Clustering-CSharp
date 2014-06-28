@@ -46,6 +46,20 @@ namespace GooglemapsClustering.Test
 			Assert.IsTrue(memoryDatabase.GetPoints().Any());
 		}
 
+
+		[TestMethod]
+		public void TestDatabaseThreadPointsCount()
+		{
+			// Arrange
+			var sumThreadPoints = memoryDatabase.GetThreadPoints().Sum(list => list.Count);
+			var sumPoints = memoryDatabase.GetPoints().Count;
+
+			// Act
+
+			// Assert	
+			Assert.AreEqual(sumThreadPoints, sumPoints);
+		}
+
 		//[Ignore]
 		[TestMethod]
 		public void TestMethod1()

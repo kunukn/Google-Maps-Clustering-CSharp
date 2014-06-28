@@ -11,7 +11,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
     /// </summary>
     public class GridCluster : ClusterAlgorithmBase
     {
-	    private readonly int _threads;
+		private readonly ThreadData _threadData;
 
         // Absolut position
         protected readonly Boundary Grid = new Boundary();
@@ -65,10 +65,10 @@ namespace GooglemapsClustering.Clustering.Algorithm
 
         public List<Line> Lines { get; private set; }
 
-        public GridCluster(IList<P> dataset, JsonGetMarkersReceive jsonReceive, int threads)
+		public GridCluster(IList<P> dataset, JsonGetMarkersReceive jsonReceive, ThreadData threadData)
             : base(dataset)
         {
-	        this._threads = threads;
+			this._threadData = threadData; // todo use threads and threadData 
 
             // Important, set _delta and _grid values in constructor as first step
             var deltas = GetDelta(jsonReceive);
@@ -83,7 +83,6 @@ namespace GooglemapsClustering.Clustering.Algorithm
         void MakeLines(JsonGetMarkersReceive jsonReceive)
         {
             if(!jsonReceive.IsDebugLinesEnabled) return; // client disabled it
-
 
 
             // Make the red lines data to be drawn in Google map
@@ -125,7 +124,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
                 var yy = b.Miny + i * DeltaY;
                                 
                 // Draw region
-                if (jsonReceive.Zoomlevel > 3)
+                if (jsonReceive.Zoomlevel > 3)  // heuristic value
                 {
                     // Don't draw lines outsize the world
                     if (MathTool.IsLowerThanLatMin(yy) || MathTool.IsGreaterThanLatMax(yy)) continue;

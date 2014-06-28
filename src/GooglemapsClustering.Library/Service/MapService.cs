@@ -56,6 +56,10 @@ namespace GooglemapsClustering.Clustering.Service
 
 				// Get all points from memory
 				IList<P> points = _memoryDatabase.GetPoints();
+				ThreadData threadData = _memoryDatabase.GetThreadData();
+
+
+				#region todo split up in threads usage, use  threadData
 
 				if (jsonReceive.TypeFilterExclude.Count == AlgoConfig.Get.MarkerTypes.Count)
 				{
@@ -72,8 +76,11 @@ namespace GooglemapsClustering.Clustering.Service
 
 				}
 
+				#endregion todo split up in threads	usage
+
+
 				// Create new instance for every ajax request with input all points and json data
-				var clusterAlgo = new GridCluster(points, jsonReceive, this._threads); 
+				var clusterAlgo = new GridCluster(points, jsonReceive, threadData); 
 
 				// Clustering
 				if (clusteringEnabled && jsonReceive.Zoomlevel < AlgoConfig.Get.ZoomlevelClusterStop)
