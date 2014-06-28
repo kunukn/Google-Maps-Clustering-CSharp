@@ -158,9 +158,6 @@
     <Content Include="App_Data\Points2.csv" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="GmcGlobalKeySettings.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="App_Data\Points.csv" />
   </ItemGroup>
   <PropertyGroup>
