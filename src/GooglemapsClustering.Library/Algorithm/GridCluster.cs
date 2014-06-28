@@ -11,6 +11,8 @@ namespace GooglemapsClustering.Clustering.Algorithm
     /// </summary>
     public class GridCluster : ClusterAlgorithmBase
     {
+	    private readonly int _threads;
+
         // Absolut position
         protected readonly Boundary Grid = new Boundary();
 
@@ -63,9 +65,11 @@ namespace GooglemapsClustering.Clustering.Algorithm
 
         public List<Line> Lines { get; private set; }
 
-        public GridCluster(IList<P> dataset, JsonGetMarkersReceive jsonReceive)
+        public GridCluster(IList<P> dataset, JsonGetMarkersReceive jsonReceive, int threads)
             : base(dataset)
         {
+	        this._threads = threads;
+
             // Important, set _delta and _grid values in constructor as first step
             var deltas = GetDelta(jsonReceive);
             DeltaX = deltas[0];

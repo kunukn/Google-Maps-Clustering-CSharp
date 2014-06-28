@@ -6,5 +6,6 @@ namespace GooglemapsClustering.Clustering.Contract
 	public interface IMemoryDatabase
 	{
 		IList<P> GetPoints();
+		int Threads { get; }	
 	}
 }

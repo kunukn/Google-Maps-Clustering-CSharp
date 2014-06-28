@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using GooglemapsClustering.Clustering.Contract;
 
@@ -10,17 +11,29 @@ namespace GooglemapsClustering.Clustering.Data
 	/// </summary>
 	public class MemoryDatabase : IMemoryDatabase
 	{
-		private  IList<P> Points { get; set; }
 		public readonly string FilePath;
+		public readonly TimeSpan LoadTime;
+		public readonly IList<P> AllPoints;
+		private readonly int _threads;
+
 
 		public IList<P> GetPoints()
 		{
-			return Points;
+			return AllPoints;
 		}
 
-		public MemoryDatabase(string filepath)
+		public int Threads
 		{
+			get { return _threads; }
+		}
+
+		public MemoryDatabase(string filepath, int threads)
+		{
+			var sw = new Stopwatch();
+			sw.Start();
+
 			FilePath = filepath;
+			_threads = threads;			 
 
 			// Load from file
 			List<P> points = Utility.Dataset.LoadDataset(FilePath);
@@ -51,7 +64,10 @@ namespace GooglemapsClustering.Clustering.Data
 				points[b] = temp;
 			}
 
-			Points = points.AsReadOnly();
+			AllPoints = points.AsReadOnly();
+
+			sw.Stop();
+			LoadTime = sw.Elapsed;
 		}
 	}
 }

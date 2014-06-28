@@ -30,7 +30,7 @@ namespace GooglemapsClustering.Test
 			bootstrap = bootstrap ?? new Bootstrap();
 			bootstrap.Configure("TestData/Points.csv");
 			memoryDatabase = memoryDatabase ?? bootstrap.Container.Resolve<IMemoryDatabase>();
-			mapService = mapService ?? bootstrap.Container.Resolve<IMapService>();		
+			mapService = mapService ?? bootstrap.Container.Resolve<IMapService>();
 		}
 
 		[TestMethod]
@@ -55,6 +55,7 @@ namespace GooglemapsClustering.Test
 			// Act
 
 			// Assert	
+			Assert.IsTrue(AlgoConfig.Get.Threads > 0);
 		}
 
 
