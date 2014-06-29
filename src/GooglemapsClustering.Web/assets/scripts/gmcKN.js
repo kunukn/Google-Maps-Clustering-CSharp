@@ -323,7 +323,7 @@ var gmcKN; // global var
                                 + '\nresponseText: ' + xhr.responseText;
 
                             gmcKN.log(msg);
-                            document.getElementById('gmcKN-errorMsg').innerText = msg;
+                            document.getElementById('gmcKN-errorMsg').innerHTML = msg;
                         }
                     });
 
@@ -342,8 +342,11 @@ var gmcKN; // global var
 
                             if (data.Ok === '0') {
                                 gmcKN.log(data.EMsg);
+                                document.getElementById('gmcKN-errorMsg').innerHTML = data.EMsg;
                                 return; // invalid state has occured
                             }
+
+                            document.getElementById('gmcKN-response-time').innerHTML = '&nbsp;' + data.Msec;
 
                             gmcKN.infowindow.setContent(data.Content);
                             gmcKN.infowindow.open(gmcKN.map, marker);
@@ -353,7 +356,7 @@ var gmcKN; // global var
                                 + xhr.responseText + '\nerr:' + err;
 
                             gmcKN.log(msg);
-                            $('#gmcKN-errorMsg').innerText = msg;
+                            $('#gmcKN-errorMsg').innerHTML = msg;
                         }
                     });
                 }
@@ -367,6 +370,7 @@ var gmcKN; // global var
             return s.replace(/\./g, '_'); //replace . with _
         },
         
+        // binary sum for toggle values
         toggleVal: function (arr) {
             return arr.reduce(function (p, c, i, a) {
                 return p + (c * Math.pow(2,i));
@@ -379,16 +383,16 @@ var gmcKN; // global var
             
             // This is strongly coupled with the html dom, maybe refactor
             var cb1 = $(s = '#gmcKN-Clustering') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb2 = $(s = '#gmcKN-Lines') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb3 = $(s = '#gmcKN-Type1') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb4 = $(s = '#gmcKN-Type2') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb5 = $(s = '#gmcKN-Type3') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb6 = $(s = '#gmcKN_Type4') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb7 = $(s = '#gmcKN_Type5') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb8 = $(s = '#gmcKN_Type6') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb9 = $(s = '#gmcKN_Type7') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb10 = $(s = '#gmcKN_Type8') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb11 = $(s = '#gmcKN_Type9') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
+            var cb2 = $(s = '#gmcKN-Lines')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
+            var cb3 = $(s = '#gmcKN-Type1')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
+            var cb4 = $(s = '#gmcKN-Type2')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
+            var cb5 = $(s = '#gmcKN-Type3')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
+            var cb6 = $(s = '#gmcKN_Type4')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
+            var cb7 = $(s = '#gmcKN_Type5')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
+            var cb8 = $(s = '#gmcKN_Type6')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
+            var cb9 = $(s = '#gmcKN_Type7')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
+            var cb10 = $(s = '#gmcKN_Type8')    ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
+            var cb11 = $(s = '#gmcKN_Type9')    ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
             
             // binary sum for toggle values, take less space in string request
             var filter = gmcKN.toggleVal([cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9, cb10, cb11]);
