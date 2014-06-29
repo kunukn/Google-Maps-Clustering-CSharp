@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GooglemapsClustering.Clustering.Data.Algo;
 
 namespace GooglemapsClustering.Clustering.Data.Json
 {

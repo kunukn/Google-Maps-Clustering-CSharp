@@ -1,4 +1,4 @@
-﻿namespace GooglemapsClustering.Clustering.Data
+﻿namespace GooglemapsClustering.Clustering.Data.Geometry
 {
     public static class Numbers
     {

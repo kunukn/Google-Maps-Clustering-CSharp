@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GooglemapsClustering.Clustering.Data
+namespace GooglemapsClustering.Clustering.Data.Geometry
 {
     [Serializable]
     public class Rectangle

@@ -3,6 +3,7 @@ using System.Linq;
 using Autofac;
 using GooglemapsClustering.Clustering.Contract;
 using GooglemapsClustering.Clustering.Data;
+using GooglemapsClustering.Clustering.Data.Config;
 using GooglemapsClustering.Clustering.Service;
 using GooglemapsClustering.Web;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

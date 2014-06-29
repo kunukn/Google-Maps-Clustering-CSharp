@@ -1,5 +1,6 @@
 ﻿using System;
-using GooglemapsClustering.Clustering.Data;
+using GooglemapsClustering.Clustering.Data.Algo;
+using GooglemapsClustering.Clustering.Data.Geometry;
 
 namespace GooglemapsClustering.Clustering.Utility
 {

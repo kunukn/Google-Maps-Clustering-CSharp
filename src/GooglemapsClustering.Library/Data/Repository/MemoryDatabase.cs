@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using GooglemapsClustering.Clustering.Contract;
+using GooglemapsClustering.Clustering.Data.Config;
+using GooglemapsClustering.Clustering.Data.Geometry;
 
-namespace GooglemapsClustering.Clustering.Data
+namespace GooglemapsClustering.Clustering.Data.Repository
 {
 	/// <summary>
 	/// The database for all the existing points
@@ -62,16 +64,16 @@ namespace GooglemapsClustering.Clustering.Data
 				// when not all can be displayed on screen
 				//
 				// Randomize order, when limit take is used for max marker display
-				// random locations are selected			
+				// random locations are selected
+				// http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
 				var rand = new Random();
 				var c = points.Count;
 				for (var i = 0; i < c; i++)
 				{
-					var a = rand.Next(c);
-					var b = rand.Next(c);
-					var temp = points[a];
-					points[a] = points[b];
-					points[b] = temp;
+					P temp = points[i];
+					int r = rand.Next(c);
+					points[i] = points[r];
+					points[r] = temp;
 				}
 
 				var llist = new LinkedList<P>();

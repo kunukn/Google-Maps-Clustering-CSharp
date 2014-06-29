@@ -1,7 +1,7 @@
 ﻿using System;
 using GooglemapsClustering.Clustering.Utility;
 
-namespace GooglemapsClustering.Clustering.Data
+namespace GooglemapsClustering.Clustering.Data.Geometry
 {
     [Serializable]
     public abstract class PBase

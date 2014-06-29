@@ -1,4 +1,6 @@
-﻿namespace GooglemapsClustering.Clustering.Data.Json
+﻿using GooglemapsClustering.Clustering.Data.Geometry;
+
+namespace GooglemapsClustering.Clustering.Data.Json
 {
 	public class JsonInfoReply : JsonReplyBase
 	{

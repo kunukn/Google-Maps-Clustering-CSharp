@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GooglemapsClustering.Clustering.Data.Geometry;
 
 namespace GooglemapsClustering.Clustering.Data.Json
 {

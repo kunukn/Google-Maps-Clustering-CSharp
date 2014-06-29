@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace GooglemapsClustering.Clustering.Data
+namespace GooglemapsClustering.Clustering.Data.Geometry
 {
     /// <summary>
     /// Used for polylines display on google maps

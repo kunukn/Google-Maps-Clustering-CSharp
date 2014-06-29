@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using GooglemapsClustering.Clustering.Data.Geometry;
 
-namespace GooglemapsClustering.Clustering.Data
+namespace GooglemapsClustering.Clustering.Data.Algo
 {
     public class Bucket
     {

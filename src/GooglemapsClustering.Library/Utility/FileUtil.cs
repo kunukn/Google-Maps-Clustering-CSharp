@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using GooglemapsClustering.Clustering.Data;
+using GooglemapsClustering.Clustering.Data.Geometry;
 
 namespace GooglemapsClustering.Clustering.Utility
 {

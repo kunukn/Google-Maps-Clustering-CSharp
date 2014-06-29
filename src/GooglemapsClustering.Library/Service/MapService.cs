@@ -5,6 +5,9 @@ using System.Linq;
 using GooglemapsClustering.Clustering.Algorithm;
 using GooglemapsClustering.Clustering.Contract;
 using GooglemapsClustering.Clustering.Data;
+using GooglemapsClustering.Clustering.Data.Algo;
+using GooglemapsClustering.Clustering.Data.Config;
+using GooglemapsClustering.Clustering.Data.Geometry;
 using GooglemapsClustering.Clustering.Data.Json;
 using GooglemapsClustering.Clustering.Utility;
 
@@ -61,21 +64,11 @@ namespace GooglemapsClustering.Clustering.Service
 
 				#region todo split up in threads usage, use  threadData
 
-				if (jsonReceive.TypeFilterExclude.Count == AlgoConfig.Get.MarkerTypes.Count)
-				{
-					// Filter all 
-					points = new List<P>(); // empty
-				}
-				else if (jsonReceive.TypeFilterExclude.Count > 0)
-				{
-					// Filter data by typeFilter value
-					// Make new obj, don't overwrite obj data
-					points = points
-						.Where(p => jsonReceive.TypeFilterExclude.Contains(p.T) == false)
-						.ToList();
-
-				}
-
+				points = FilterUtil.Filter(
+					points, 
+					new FilterData{TypeFilterExclude = jsonReceive.TypeFilterExclude}
+					);
+			
 				#endregion todo split up in threads	usage
 
 

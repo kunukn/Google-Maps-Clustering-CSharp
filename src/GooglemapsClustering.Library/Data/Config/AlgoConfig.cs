@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using GooglemapsClustering.Clustering.Contract;
 
-namespace GooglemapsClustering.Clustering.Data
+namespace GooglemapsClustering.Clustering.Data.Config
 {
 	/// <summary>
 	/// Configurations data

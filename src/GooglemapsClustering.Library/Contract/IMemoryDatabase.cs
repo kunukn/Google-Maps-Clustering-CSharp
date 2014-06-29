@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using GooglemapsClustering.Clustering.Data;
+using GooglemapsClustering.Clustering.Data.Geometry;
 
 namespace GooglemapsClustering.Clustering.Contract
 {

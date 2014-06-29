@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using GooglemapsClustering.Clustering.Utility;
 
-namespace GooglemapsClustering.Clustering.Data
+namespace GooglemapsClustering.Clustering.Data.Geometry
 {
     /// <summary>
     /// Point class, overwrite it, modify it, extend it as you like

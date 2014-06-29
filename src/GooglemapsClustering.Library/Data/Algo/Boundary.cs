@@ -1,7 +1,8 @@
 ﻿using System;
+using GooglemapsClustering.Clustering.Data.Geometry;
 using GooglemapsClustering.Clustering.Utility;
 
-namespace GooglemapsClustering.Clustering.Data
+namespace GooglemapsClustering.Clustering.Data.Algo
 {
     public class Boundary : Rectangle
     {        

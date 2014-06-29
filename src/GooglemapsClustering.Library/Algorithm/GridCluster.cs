@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using GooglemapsClustering.Clustering.Data;
+using GooglemapsClustering.Clustering.Data.Algo;
+using GooglemapsClustering.Clustering.Data.Config;
+using GooglemapsClustering.Clustering.Data.Geometry;
 using GooglemapsClustering.Clustering.Data.Json;
 using GooglemapsClustering.Clustering.Utility;
 
