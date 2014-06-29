@@ -195,6 +195,8 @@ var gmcKN; // global var
                         swlon: mapData.swLon,
                         zoomLevel: mapData.zoomLevel,
                         filter: gmcKN.getFilterValues(),
+                        w: Math.max(document.documentElement.clientWidth, window.innerWidth || 0) ,
+                        h: Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
                     };
 
                     $.ajax({

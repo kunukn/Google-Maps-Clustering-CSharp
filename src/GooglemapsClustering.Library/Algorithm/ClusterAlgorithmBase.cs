@@ -24,11 +24,11 @@ namespace GooglemapsClustering.Clustering.Algorithm
         protected ClusterAlgorithmBase() { }
 		protected ClusterAlgorithmBase(ThreadData threadData)
 		{
-			ThreadData = threadData;
 			if (threadData._(_ => _.AllPoints) == null)
             {
                 throw new Exception("dataset is null");
             }
+			this.ThreadData = threadData;
 			this.Dataset = threadData.AllPoints;
         }
 
