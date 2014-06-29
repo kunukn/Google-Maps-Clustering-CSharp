@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using GooglemapsClustering.Clustering.Contract;
+using GooglemapsClustering.Clustering.Extensions;
 using GooglemapsClustering.Clustering.Utility;
 
 namespace GooglemapsClustering.Clustering.Data.Geometry
@@ -8,7 +10,7 @@ namespace GooglemapsClustering.Clustering.Data.Geometry
     /// Point class, overwrite it, modify it, extend it as you like
     /// </summary>    
     [Serializable]
-    public class P : PBase, ISerializable
+	public class P : PBase, ISerializable, IP
     {
         public P()
         {            
@@ -18,7 +20,6 @@ namespace GooglemapsClustering.Clustering.Data.Geometry
             X = x;
             Y = y;
         }
-
 
         public virtual P Normalize()
         {

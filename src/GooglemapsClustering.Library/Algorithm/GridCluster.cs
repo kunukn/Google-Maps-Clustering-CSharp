@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using GooglemapsClustering.Clustering.Contract;
 using GooglemapsClustering.Clustering.Data;
 using GooglemapsClustering.Clustering.Data.Algo;
 using GooglemapsClustering.Clustering.Data.Config;
 using GooglemapsClustering.Clustering.Data.Geometry;
 using GooglemapsClustering.Clustering.Data.Json;
+using GooglemapsClustering.Clustering.Extensions;
 using GooglemapsClustering.Clustering.Utility;
 
 namespace GooglemapsClustering.Clustering.Algorithm
@@ -12,9 +14,9 @@ namespace GooglemapsClustering.Clustering.Algorithm
     /// <summary>
     /// Author: Kunuk Nykjaer
     /// </summary>
-    public class GridCluster : ClusterAlgorithmBase
+	public class GridCluster : ClusterAlgorithmBase, ICluster
     {
-		private readonly ThreadData _threadData;
+	    private readonly JsonGetMarkersReceive _jsonReceive;
 
         // Absolut position
         protected readonly Boundary Grid = new Boundary();
@@ -23,17 +25,17 @@ namespace GooglemapsClustering.Clustering.Algorithm
         protected readonly double DeltaX;
         protected readonly double DeltaY;
 
-        public static Boundary GetBoundaryExtended(JsonGetMarkersReceive jsonReceive)
+        public Boundary GetBoundaryExtended()
         {
-            var deltas = GetDelta(jsonReceive);
+			var deltas = GetDelta();
             var deltaX = deltas[0];
             var deltaY = deltas[1];
 
             // Grid with extended outer grid-area non-visible            
-            var a = MathTool.FloorLatLon(jsonReceive.Viewport.Minx, deltaX) - deltaX * AlgoConfig.Get.OuterGridExtend;
-            var b = MathTool.FloorLatLon(jsonReceive.Viewport.Miny, deltaY) - deltaY * AlgoConfig.Get.OuterGridExtend;
-            var a2 = MathTool.FloorLatLon(jsonReceive.Viewport.Maxx, deltaX) + deltaX * (1 + AlgoConfig.Get.OuterGridExtend);
-            var b2 = MathTool.FloorLatLon(jsonReceive.Viewport.Maxy, deltaY) + deltaY * (1 + AlgoConfig.Get.OuterGridExtend);
+			var a = MathTool.FloorLatLon(_jsonReceive.Viewport.Minx, deltaX) - deltaX * AlgoConfig.Get.OuterGridExtend;
+			var b = MathTool.FloorLatLon(_jsonReceive.Viewport.Miny, deltaY) - deltaY * AlgoConfig.Get.OuterGridExtend;
+			var a2 = MathTool.FloorLatLon(_jsonReceive.Viewport.Maxx, deltaX) + deltaX * (1 + AlgoConfig.Get.OuterGridExtend);
+			var b2 = MathTool.FloorLatLon(_jsonReceive.Viewport.Maxy, deltaY) + deltaY * (1 + AlgoConfig.Get.OuterGridExtend);
 
             // Latitude is special with Google Maps, they don't wrap around, then do constrain
             b = MathTool.ConstrainLatitude(b);
@@ -45,48 +47,50 @@ namespace GooglemapsClustering.Clustering.Algorithm
         }
 
 
-        public static double[] GetDelta(JsonGetMarkersReceive jsonReceive)
+        public double[] GetDelta()
         {
             // Heuristic specific values and grid size dependent.
             // used in combination with zoom level.
 
             // xZoomLevel1 and yZoomLevel1 is used to define the size of one grid-cell
 
-            // Absolute base value of longitude distance
+            // Absolute base value of longitude distance, heuristic value
             const int xZoomLevel1 = 480;
-            // Absolute base value of latitude distance
+			// Absolute base value of latitude distance, heuristic value
             const int yZoomLevel1 = 240;
 
             // Relative values, used for adjusting grid size
             var gridScaleX = AlgoConfig.Get.Gridx;
             var gridScaleY = AlgoConfig.Get.Gridy;
 
-            var x = MathTool.Half(xZoomLevel1, jsonReceive.Zoomlevel - 1) / gridScaleX;
-            var y = MathTool.Half(yZoomLevel1, jsonReceive.Zoomlevel - 1) / gridScaleY;
+			var x = MathTool.Half(xZoomLevel1, _jsonReceive.Zoomlevel - 1) / gridScaleX;
+			var y = MathTool.Half(yZoomLevel1, _jsonReceive.Zoomlevel - 1) / gridScaleY;
             return new double[] { x, y };
         }
 
-        public List<Line> Lines { get; private set; }
+     
 
-		public GridCluster(IList<P> dataset, JsonGetMarkersReceive jsonReceive, ThreadData threadData)
-            : base(dataset)
-        {
-			this._threadData = threadData; // todo use threads and threadData 
+		/// <summary>
+		/// todo use threads and threadData
+		/// </summary>
+		/// <param name="threadData"></param>
+		/// <param name="jsonReceive"></param>
+	    public GridCluster(ThreadData threadData, JsonGetMarkersReceive jsonReceive)
+			: base(threadData)
+		{
+		    this._jsonReceive = jsonReceive;
 
             // Important, set _delta and _grid values in constructor as first step
-            var deltas = GetDelta(jsonReceive);
+            double[] deltas = GetDelta();
             DeltaX = deltas[0];
             DeltaY = deltas[1];
-            Grid = GetBoundaryExtended(jsonReceive);
-            Lines = new List<Line>();
-
-            if (AlgoConfig.Get.DoShowGridLinesInGoogleMap) MakeLines(jsonReceive);
+			Grid = GetBoundaryExtended();			
         }
 
-        void MakeLines(JsonGetMarkersReceive jsonReceive)
+		public List<Line> GetPolyLines()
         {
-            if(!jsonReceive.IsDebugLinesEnabled) return; // client disabled it
-
+			if (!AlgoConfig.Get.DoShowGridLinesInGoogleMap) return new List<Line>(); // server disabled it
+			if (!_jsonReceive.IsDebugLinesEnabled) return new List<Line>(); // client disabled it
 
             // Make the red lines data to be drawn in Google map
             
@@ -97,7 +101,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
             var linesStepsY = (int)(Math.Round(Grid.AbsY / DeltaY) + borderLinesAdding);
 
             var b = new Boundary(Grid);
-            const double restrictLat = 5.5;
+            const double restrictLat = 5.5;	 // heuristic value, Google maps related
             b.Miny = MathTool.ConstrainLatitude(b.Miny, restrictLat); // Make sure it is visible on screen, restrict by some value
             b.Maxy = MathTool.ConstrainLatitude(b.Maxy, restrictLat);
 
@@ -107,7 +111,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
                 var xx  = b.Minx + i * DeltaX;
                 
                 // Draw region
-                if (jsonReceive.Zoomlevel > 3)
+				if (_jsonReceive.Zoomlevel > 3)	// heuristic value, Google maps related
                 {
                     temp.Add(new Rectangle { Minx = xx, Miny = b.Miny, Maxx = xx, Maxy = b.Maxy });
                 }
@@ -118,7 +122,6 @@ namespace GooglemapsClustering.Clustering.Algorithm
                     temp.Add(new Rectangle { Minx = xx, Miny = LatLonInfo.MinLatValue + restrictLat, Maxx = xx, Maxy = 0 });
                     temp.Add(new Rectangle { Minx = xx, Miny = 0, Maxx = xx, Maxy = LatLonInfo.MaxLatValue-restrictLat });
                 }
-
             }
 
             // Horizontal lines            
@@ -127,7 +130,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
                 var yy = b.Miny + i * DeltaY;
                                 
                 // Draw region
-                if (jsonReceive.Zoomlevel > 3)  // heuristic value
+				if (_jsonReceive.Zoomlevel > 3)  // heuristic value
                 {
                     // Don't draw lines outsize the world
                     if (MathTool.IsLowerThanLatMin(yy) || MathTool.IsGreaterThanLatMax(yy)) continue;
@@ -143,6 +146,8 @@ namespace GooglemapsClustering.Clustering.Algorithm
                 }
             }
 
+			var lines = new List<Line>();
+
             // Normalize the lines and add as string
             foreach (var line in temp)
             {
@@ -150,8 +155,9 @@ namespace GooglemapsClustering.Clustering.Algorithm
                 var x2 = (line.Maxx).NormalizeLongitude().DoubleToString();
                 var y = (line.Miny).NormalizeLatitude().DoubleToString();
                 var y2 = (line.Maxy).NormalizeLatitude().DoubleToString();                
-                Lines.Add(new Line { X = x, Y = y, X2 = x2, Y2 = y2 });
+                lines.Add(new Line { X = x, Y = y, X2 = x2, Y2 = y2 });
             }
+			return lines;
         }
        
 

@@ -57,8 +57,12 @@ body {
     background-color: #f00;
 }
 
-#gmcKN-zoomInfo, #gmcKN-markersCount {
+#gmcKN-zoomInfo, #gmcKN-markersCount, #gmcKN-response-time  {
     display: inline-block;
+}
+
+#gmcKN-zoomInfo {
+    margin-top: 14px;
 }
 
 #gmcKN_lonlat {
@@ -80,6 +84,21 @@ body {
     z-index: 3;
 }
 
+    #gmcKN-checkboxContainer ul {
+        list-style: none;
+    }
+
+        #gmcKN-checkboxContainer ul li {
+            display: block;
+        }
+
+        #gmcKN-checkboxContainer ul input {
+        }
+
+        #gmcKN-checkboxContainer ul img {
+            display: inline-block;
+            vertical-align: middle;
+        }
 
 #gmcKN-zoomIn {
     margin-right: 4px;
@@ -125,7 +144,7 @@ body {
     height: 55px;
 }
 
-.gmcKN_clustersize3 { 
+.gmcKN_clustersize3 {
     left: -33px;
     top: -33px;
     line-height: 65px;
@@ -160,13 +179,14 @@ body {
     display: none;
 }
 
+
 .gmcKN-marker-info {
     -moz-min-width: 200px;
     -ms-min-width: 200px;
     -o-min-width: 200px;
     -webkit-min-width: 200px;
     min-width: 200px;
-    min-height: 100px;    
+    min-height: 100px;
     margin: 0;
-    padding: 0;  
+    padding: 0;
 }

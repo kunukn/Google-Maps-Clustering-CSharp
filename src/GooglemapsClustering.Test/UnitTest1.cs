@@ -48,6 +48,7 @@ namespace GooglemapsClustering.Test
 		}
 
 
+		[Ignore]
 		[TestMethod]
 		public void TestDatabaseThreadPointsCount()
 		{
@@ -61,7 +62,7 @@ namespace GooglemapsClustering.Test
 			Assert.AreEqual(sumThreadPoints, sumPoints);
 		}
 
-		//[Ignore]
+		[Ignore]
 		[TestMethod]
 		public void TestMethod1()
 		{

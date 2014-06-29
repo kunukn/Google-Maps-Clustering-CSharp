@@ -207,6 +207,7 @@ var gmcKN; // global var
 
                             if (data.Ok === '0') {
                                 gmcKN.log(data.EMsg);
+                                document.getElementById('gmcKN-errorMsg').innerHTML = data.EMsg;
                                 return; // invalid state has occured
                             }
 
@@ -216,6 +217,9 @@ var gmcKN; // global var
                             }
                             document.getElementById('gmcKN-markersCount').innerHTML = '&nbsp;Markers: '
                                 + data.Count + ' ' + mia;
+                            
+                            document.getElementById('gmcKN-response-time').innerHTML = '&nbsp;' + data.Msec;
+                            
 
                             // grid lines clear current
                             $.each(gmcKN.mymap.events.polys, function () {

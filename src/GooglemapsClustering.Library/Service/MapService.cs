@@ -9,6 +9,7 @@ using GooglemapsClustering.Clustering.Data.Algo;
 using GooglemapsClustering.Clustering.Data.Config;
 using GooglemapsClustering.Clustering.Data.Geometry;
 using GooglemapsClustering.Clustering.Data.Json;
+using GooglemapsClustering.Clustering.Extensions;
 using GooglemapsClustering.Clustering.Utility;
 
 namespace GooglemapsClustering.Clustering.Service
@@ -17,11 +18,11 @@ namespace GooglemapsClustering.Clustering.Service
 	{
 		private readonly IMemoryDatabase _memoryDatabase;
 		private readonly int _threads;
-		
+
 		public MapService(IMemoryDatabase memoryDatabase)
 		{
 			_memoryDatabase = memoryDatabase;
-			_threads = _memoryDatabase.Threads;			
+			_threads = _memoryDatabase.Threads;
 		}
 
 		public JsonMarkersReply GetMarkers(JsonGetMarkersInput input)
@@ -45,65 +46,70 @@ namespace GooglemapsClustering.Clustering.Service
 				var swlon = input.swlon.ToDouble();
 				var zoomLevel = int.Parse(input.zoomLevel);
 				var filter = input.filter ?? "";
-		
+
 				// values are validated there
 				var jsonReceive = new JsonGetMarkersReceive(nelat, nelon, swlat, swlon, zoomLevel, filter);
 
-				var clusteringEnabled = jsonReceive.IsClusteringEnabled
-					|| AlgoConfig.Get.AlwaysClusteringEnabledWhenZoomLevelLess > jsonReceive.Zoomlevel;
-
+				
 				JsonMarkersReply reply;
 
 				jsonReceive.Viewport.ValidateLatLon(); // Validate google map viewport input (should be always valid)
 				jsonReceive.Viewport.Normalize();
 
 				// Get all points from memory
-				IList<P> points = _memoryDatabase.GetPoints();
 				ThreadData threadData = _memoryDatabase.GetThreadData();
 
+				#region fiter
 
-				#region todo split up in threads usage, use  threadData
-
-				points = FilterUtil.Filter(
-					points, 
-					new FilterData{TypeFilterExclude = jsonReceive.TypeFilterExclude}
+				// Filter points
+				threadData = FilterUtil.Filter(
+					threadData,
+					new FilterData { TypeFilterExclude = jsonReceive.TypeFilterExclude }
 					);
-			
-				#endregion todo split up in threads	usage
+
+				#endregion filter
+
 
 
 				// Create new instance for every ajax request with input all points and json data
-				var clusterAlgo = new GridCluster(points, jsonReceive, threadData); 
+				ICluster clusterAlgo = new GridCluster(threadData, jsonReceive);
+
+				var clusteringEnabled = jsonReceive.IsClusteringEnabled
+					|| AlgoConfig.Get.AlwaysClusteringEnabledWhenZoomLevelLess > jsonReceive.Zoomlevel;
 
 				// Clustering
 				if (clusteringEnabled && jsonReceive.Zoomlevel < AlgoConfig.Get.ZoomlevelClusterStop)
 				{
-					// Calculate data to be displayed
-					var clusterPoints = clusterAlgo.GetCluster(new ClusterInfo
-					{
-						ZoomLevel = jsonReceive.Zoomlevel,
-					});
+					#region cluster
+
+					IList<P> markers = clusterAlgo.GetCluster(
+						new ClusterInfo {ZoomLevel = jsonReceive.Zoomlevel}
+						);
+
+					#endregion cluster
+
 
 					// Prepare data to the client
 					reply = new JsonMarkersReply
 					{
-						Markers = clusterPoints,
-						Polylines = clusterAlgo.Lines,
+						Markers = markers,
+						Polylines = clusterAlgo.GetPolyLines(),
 					};
 
 					// Return client data
 					return reply;
 				}
 
+
 				// If we are here then there are no clustering
 				// The number of items returned is restricted to avoid json data overflow
-				List<P> filteredDataset = ClusterAlgorithmBase.FilterDataset(points, jsonReceive.Viewport);
-				List<P> filteredDatasetMaxPoints = filteredDataset.Take(AlgoConfig.Get.MaxMarkersReturned).ToList();
+				IList<P> filteredDataset = ClusterAlgorithmBase.FilterDataset(threadData.AllPoints, jsonReceive.Viewport);
+				IList<P> filteredDatasetMaxPoints = filteredDataset.Take(AlgoConfig.Get.MaxMarkersReturned).ToList();
 
 				reply = new JsonMarkersReply
 				{
 					Markers = filteredDatasetMaxPoints,
-					Polylines = clusterAlgo.Lines,
+					Polylines = clusterAlgo.GetPolyLines(),
 					Mia = filteredDataset.Count - filteredDatasetMaxPoints.Count,
 				};
 				return reply;

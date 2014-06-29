@@ -20,20 +20,19 @@
 
         <div id="gmcKN-checkboxContainer">
            
-            <!-- These id values are used by the js for filtering data request -->
-            <input type="checkbox" id="gmcKN-Type1" name="Type" value="Type1" checked="checked" />Type 1<br />
-            <input type="checkbox" id="gmcKN-Type2" name="Type" value="Type2" checked="checked" />Type 2<br />
-            <input type="checkbox" id="gmcKN-Type3" name="Type" value="Type3" checked="checked" />Type 3<br />
-            <input type="checkbox" id="gmcKN-Lines" name="Type" value="Lines" />
-            <span>Lines</span>
-            <br />
+            <!-- These id values are used by the js for filtering data request -->    
+            <ul>
+                <li><input type="checkbox" id="gmcKN-Type1" name="Type" value="Type1" checked="checked" /> <img src="~/assets/images/markers/court.png" alt="court" /></li>
+                <li><input type="checkbox" id="gmcKN-Type2" name="Type" value="Type2" checked="checked" /> <img src="~/assets/images/markers/firstaid.png" alt="firstaid" /></li>
+                <li><input type="checkbox" id="gmcKN-Type3" name="Type" value="Type3" checked="checked" /> <img src="~/assets/images/markers/house.png" alt="house" /></li>
+                <li><input type="checkbox" id="gmcKN-Lines" name="Type" value="Lines" /> <label>Lines</label> </li>
+            </ul>          
             <span id="gmcKN-Clustering-span">
-                <input type="checkbox" id="gmcKN-Clustering" name="Type" value="Clustering" checked="checked" />
-                Clustering
+                <input type="checkbox" id="gmcKN-Clustering" name="Type" value="Clustering" checked="checked" /> <label>Clustering</label>
             </span>
-            <br />
             <span id="gmcKN-zoomInfo"></span><br />
             <span id="gmcKN-markersCount"></span>
+            <span id="gmcKN-response-time"></span>
         </div>
     </div>
 

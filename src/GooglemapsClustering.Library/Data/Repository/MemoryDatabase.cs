@@ -20,7 +20,7 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 
 		public IList<P> GetPoints()
 		{
-			return ThreadData.Points;
+			return ThreadData.AllPoints;
 		}
 
 		public IList<P>[] GetThreadPoints()
@@ -79,41 +79,43 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 				var llist = new LinkedList<P>();
 				points.ForEach(p => llist.AddLast(p));
 
-				ThreadData.Points = points.AsReadOnly();
+				ThreadData.AllPoints = points.AsReadOnly();
 
-				// Thread related data
-				// Data are partitioned evenly to be used by the individual threads 
-				var delta = points.Count / Threads;
-				ThreadData.ThreadPoints = new IList<P>[Threads];
-
-				// Divide all the points evenly to the array of pointlist
-				for (int i = 0; i < Threads; i++)
+				if (ThreadData.Threads > 0)
 				{
-					ThreadData.ThreadPoints[i] = new List<P>();
-					for (int j = 0; j < delta; j++)
+					// Thread related data
+					// Data are partitioned evenly to be used by the individual threads 
+					var delta = points.Count / Threads;
+
+					// Divide all the points evenly to the array of pointlist
+					for (int i = 0; i < Threads; i++)
+					{
+						ThreadData.ThreadPoints[i] = new List<P>();
+						for (int j = 0; j < delta; j++)
+						{
+							var p = llist.First();
+							llist.RemoveFirst();
+							ThreadData.ThreadPoints[i].Add(p);
+						}
+					}
+
+					// Add remaining points to last array
+					while (llist.Any())
 					{
 						var p = llist.First();
 						llist.RemoveFirst();
-						ThreadData.ThreadPoints[i].Add(p);
+						ThreadData.ThreadPoints.Last().Add(p);
 					}
-				}
 
-				// Add remaining points to last array
-				while (llist.Any())
-				{
-					var p = llist.First();
-					llist.RemoveFirst();
-					ThreadData.ThreadPoints.Last().Add(p);
-				}
-
-				// Readonly array
-				for (int i = 0; i < Threads; i++)
-				{
-					if (ThreadData.ThreadPoints[i] is List<P>)
+					// Readonly array
+					for (int i = 0; i < Threads; i++)
 					{
-						ThreadData.ThreadPoints[i] = (ThreadData.ThreadPoints[i] as List<P>).AsReadOnly();
+						if (ThreadData.ThreadPoints[i] is List<P>)
+						{
+							ThreadData.ThreadPoints[i] = (ThreadData.ThreadPoints[i] as List<P>).AsReadOnly();
+						}
 					}
-				}
+				}				
 
 				sw.Stop();
 				LoadTime = sw.Elapsed;

@@ -4,9 +4,9 @@ using System.Globalization;
 using System.Linq;
 using GooglemapsClustering.Clustering.Data.Geometry;
 
-namespace GooglemapsClustering.Clustering.Utility
+namespace GooglemapsClustering.Clustering.Extensions
 {
-    public static class DataExtensions
+    public static class DataExtension
     {
         static readonly CultureInfo CultureEnUs = new CultureInfo("en-US");
         const string S = "G";

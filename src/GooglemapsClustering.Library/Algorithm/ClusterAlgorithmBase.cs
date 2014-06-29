@@ -5,6 +5,7 @@ using GooglemapsClustering.Clustering.Data;
 using GooglemapsClustering.Clustering.Data.Algo;
 using GooglemapsClustering.Clustering.Data.Config;
 using GooglemapsClustering.Clustering.Data.Geometry;
+using GooglemapsClustering.Clustering.Extensions;
 using GooglemapsClustering.Clustering.Utility;
 
 namespace GooglemapsClustering.Clustering.Algorithm
@@ -13,20 +14,22 @@ namespace GooglemapsClustering.Clustering.Algorithm
     /// /// Author: Kunuk Nykjaer
     /// </summary>
     public abstract class ClusterAlgorithmBase
-    {        
+    {
+		protected ThreadData ThreadData;
         protected readonly IList<P> Dataset; // all points
         //id, bucket
         public readonly Dictionary<string, Bucket> BucketsLookup =
             new Dictionary<string, Bucket>();
 
         protected ClusterAlgorithmBase() { }
-        protected ClusterAlgorithmBase(IList<P> dataset)
-        {
-            if (dataset == null)
+		protected ClusterAlgorithmBase(ThreadData threadData)
+		{
+			ThreadData = threadData;
+			if (threadData._(_ => _.AllPoints) == null)
             {
-                throw new ApplicationException(string.Format("dataset is null"));
-            }                
-            Dataset = dataset;
+                throw new Exception("dataset is null");
+            }
+			this.Dataset = threadData.AllPoints;
         }
 
         public abstract List<P> GetCluster(ClusterInfo clusterInfo);
@@ -59,7 +62,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
         }
 
         // O(n), could be O(logn-ish) using range search or similar, no problem when points are <500.000
-        public static List<P> FilterDataset(IList<P> dataset, Boundary viewport)
+        public static IList<P> FilterDataset(IList<P> dataset, Boundary viewport)
         {            
             return dataset.Where(i => MathTool.IsInside(viewport, i)).ToList();
         }
