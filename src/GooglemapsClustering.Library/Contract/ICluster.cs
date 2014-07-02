@@ -6,7 +6,7 @@ namespace GooglemapsClustering.Clustering.Contract
 {
 	public interface ICluster
 	{
-		List<P> GetCluster(ClusterInfo clusterInfo);
-		List<Line> GetPolyLines();
+		IList<P> GetCluster(ClusterInfo clusterInfo);
+		IList<Line> GetPolyLines();
 	}
 }

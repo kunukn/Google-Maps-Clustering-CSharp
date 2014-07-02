@@ -11,332 +11,334 @@ using GooglemapsClustering.Clustering.Utility;
 
 namespace GooglemapsClustering.Clustering.Algorithm
 {
-    /// <summary>
-    /// Author: Kunuk Nykjaer
-    /// </summary>
+	/// <summary>
+	/// Author: Kunuk Nykjaer
+	/// </summary>
 	public class GridCluster : ClusterAlgorithmBase, ICluster
-    {
-	    private readonly JsonGetMarkersReceive _jsonReceive;
+	{
+		private readonly JsonGetMarkersReceive _jsonReceive;
 
-        // Absolut position
-        protected readonly Boundary Grid = new Boundary();
+		// Absolut position
+		protected readonly Boundary Grid = new Boundary();
 
-        // Bucket placement calc, grid cluster algo
-        protected readonly double DeltaX;
-        protected readonly double DeltaY;
+		// Bucket placement calc, grid cluster algo
+		protected readonly double DeltaX;
+		protected readonly double DeltaY;
 
-        public Boundary GetBoundaryExtended()
-        {
+		public Boundary GetBoundaryExtended()
+		{
 			var deltas = GetDelta();
-            var deltaX = deltas[0];
-            var deltaY = deltas[1];
+			var deltaX = deltas[0];
+			var deltaY = deltas[1];
 
-            // Grid with extended outer grid-area non-visible            
+			// Grid with extended outer grid-area non-visible            
 			var a = MathTool.FloorLatLon(_jsonReceive.Viewport.Minx, deltaX) - deltaX * AlgoConfig.Get.OuterGridExtend;
 			var b = MathTool.FloorLatLon(_jsonReceive.Viewport.Miny, deltaY) - deltaY * AlgoConfig.Get.OuterGridExtend;
 			var a2 = MathTool.FloorLatLon(_jsonReceive.Viewport.Maxx, deltaX) + deltaX * (1 + AlgoConfig.Get.OuterGridExtend);
 			var b2 = MathTool.FloorLatLon(_jsonReceive.Viewport.Maxy, deltaY) + deltaY * (1 + AlgoConfig.Get.OuterGridExtend);
 
-            // Latitude is special with Google Maps, they don't wrap around, then do constrain
-            b = MathTool.ConstrainLatitude(b);
-            b2 = MathTool.ConstrainLatitude(b2);
+			// Latitude is special with Google Maps, they don't wrap around, then do constrain
+			b = MathTool.ConstrainLatitude(b);
+			b2 = MathTool.ConstrainLatitude(b2);
 
-            var grid = new Boundary { Minx = a, Miny = b, Maxx = a2, Maxy = b2 };
-            grid.Normalize();
-            return grid;
-        }
+			var grid = new Boundary { Minx = a, Miny = b, Maxx = a2, Maxy = b2 };
+			grid.Normalize();
+			return grid;
+		}
 
 
-        public double[] GetDelta()
-        {
-            // Heuristic specific values and grid size dependent.
-            // used in combination with zoom level.
+		public double[] GetDelta()
+		{
+			// Heuristic specific values and grid size dependent.
+			// used in combination with zoom level.
 
-            // xZoomLevel1 and yZoomLevel1 is used to define the size of one grid-cell
+			// xZoomLevel1 and yZoomLevel1 is used to define the size of one grid-cell
 
-            // Absolute base value of longitude distance, heuristic value
-            const int xZoomLevel1 = 480;
+			// Absolute base value of longitude distance, heuristic value
+			const int xZoomLevel1 = 480;
 			// Absolute base value of latitude distance, heuristic value
-            const int yZoomLevel1 = 240;
+			const int yZoomLevel1 = 240;
 
-            // Relative values, used for adjusting grid size
-            var gridScaleX = AlgoConfig.Get.Gridx;
-            var gridScaleY = AlgoConfig.Get.Gridy;
+			// Relative values, used for adjusting grid size
+			var gridScaleX = AlgoConfig.Get.Gridx;
+			var gridScaleY = AlgoConfig.Get.Gridy;
 
 			var x = MathTool.Half(xZoomLevel1, _jsonReceive.Zoomlevel - 1) / gridScaleX;
 			var y = MathTool.Half(yZoomLevel1, _jsonReceive.Zoomlevel - 1) / gridScaleY;
-            return new double[] { x, y };
-        }
+			return new double[] { x, y };
+		}
 
-     
+
 
 		/// <summary>
 		/// todo use threads and threadData
 		/// </summary>
 		/// <param name="threadData"></param>
 		/// <param name="jsonReceive"></param>
-	    public GridCluster(ThreadData threadData, JsonGetMarkersReceive jsonReceive)
+		public GridCluster(ThreadData threadData, JsonGetMarkersReceive jsonReceive)
 			: base(threadData)
 		{
-		    this._jsonReceive = jsonReceive;
+			this._jsonReceive = jsonReceive;
 
-            // Important, set _delta and _grid values in constructor as first step
-            double[] deltas = GetDelta();
-            DeltaX = deltas[0];
-            DeltaY = deltas[1];
-			Grid = GetBoundaryExtended();			
-        }
+			// Important, set _delta and _grid values in constructor as first step
+			double[] deltas = GetDelta();
+			DeltaX = deltas[0];
+			DeltaY = deltas[1];
+			Grid = GetBoundaryExtended();
+		}
 
-		public List<Line> GetPolyLines()
-        {
+		/// <summary>
+		/// For debugging purpose
+		/// Display the red grid lines on the map to show how the points are clustered
+		/// </summary>
+		/// <returns></returns>
+		public IList<Line> GetPolyLines()
+		{
 			if (!AlgoConfig.Get.DoShowGridLinesInGoogleMap) return new List<Line>(); // server disabled it
 			if (!_jsonReceive.IsDebugLinesEnabled) return new List<Line>(); // client disabled it
 
-            // Make the red lines data to be drawn in Google map
-            
-            var temp = new List<Rectangle>();
+			// Make the red lines data to be drawn in Google map
 
-            const int borderLinesAdding = 1;
-            var linesStepsX = (int)(Math.Round(Grid.AbsX / DeltaX) + borderLinesAdding);
-            var linesStepsY = (int)(Math.Round(Grid.AbsY / DeltaY) + borderLinesAdding);
+			var temp = new List<Rectangle>();
 
-            var b = new Boundary(Grid);
-            const double restrictLat = 5.5;	 // heuristic value, Google maps related
-            b.Miny = MathTool.ConstrainLatitude(b.Miny, restrictLat); // Make sure it is visible on screen, restrict by some value
-            b.Maxy = MathTool.ConstrainLatitude(b.Maxy, restrictLat);
+			const int borderLinesAdding = 1;
+			var linesStepsX = (int)(Math.Round(Grid.AbsX / DeltaX) + borderLinesAdding);
+			var linesStepsY = (int)(Math.Round(Grid.AbsY / DeltaY) + borderLinesAdding);
 
-            // Vertical lines
-            for (var i = 0; i < linesStepsX; i++)
-            {
-                var xx  = b.Minx + i * DeltaX;
-                
-                // Draw region
+			var b = new Boundary(Grid);
+			const double restrictLat = 5.5;	 // heuristic value, Google maps related
+			b.Miny = MathTool.ConstrainLatitude(b.Miny, restrictLat); // Make sure it is visible on screen, restrict by some value
+			b.Maxy = MathTool.ConstrainLatitude(b.Maxy, restrictLat);
+
+			// Vertical lines
+			for (var i = 0; i < linesStepsX; i++)
+			{
+				var xx = b.Minx + i * DeltaX;
+
+				// Draw region
 				if (_jsonReceive.Zoomlevel > 3)	// heuristic value, Google maps related
-                {
-                    temp.Add(new Rectangle { Minx = xx, Miny = b.Miny, Maxx = xx, Maxy = b.Maxy });
-                }
-                // World wrap issue when same latlon area visible multiple times
-                // Make sure line is drawn from left to right on screen
-                else
-                {
-                    temp.Add(new Rectangle { Minx = xx, Miny = LatLonInfo.MinLatValue + restrictLat, Maxx = xx, Maxy = 0 });
-                    temp.Add(new Rectangle { Minx = xx, Miny = 0, Maxx = xx, Maxy = LatLonInfo.MaxLatValue-restrictLat });
-                }
-            }
+				{
+					temp.Add(new Rectangle { Minx = xx, Miny = b.Miny, Maxx = xx, Maxy = b.Maxy });
+				}
+				// World wrap issue when same latlon area visible multiple times
+				// Make sure line is drawn from left to right on screen
+				else
+				{
+					temp.Add(new Rectangle { Minx = xx, Miny = LatLonInfo.MinLatValue + restrictLat, Maxx = xx, Maxy = 0 });
+					temp.Add(new Rectangle { Minx = xx, Miny = 0, Maxx = xx, Maxy = LatLonInfo.MaxLatValue - restrictLat });
+				}
+			}
 
-            // Horizontal lines            
-            for (var i = 0; i < linesStepsY; i++)
-            {
-                var yy = b.Miny + i * DeltaY;
-                                
-                // Draw region
+			// Horizontal lines            
+			for (var i = 0; i < linesStepsY; i++)
+			{
+				var yy = b.Miny + i * DeltaY;
+
+				// Draw region
 				if (_jsonReceive.Zoomlevel > 3)  // heuristic value
-                {
-                    // Don't draw lines outsize the world
-                    if (MathTool.IsLowerThanLatMin(yy) || MathTool.IsGreaterThanLatMax(yy)) continue;
+				{
+					// Don't draw lines outsize the world
+					if (MathTool.IsLowerThanLatMin(yy) || MathTool.IsGreaterThanLatMax(yy)) continue;
 
-                    temp.Add(new Rectangle { Minx = b.Minx, Miny = yy, Maxx = b.Maxx, Maxy = yy });
-                }                
-                // World wrap issue when same latlon area visible multiple times
-                // Make sure line is drawn from left to right on screen
-                else
-                {
-                    temp.Add(new Rectangle { Minx = LatLonInfo.MinLonValue, Miny = yy, Maxx = 0, Maxy = yy });
-                    temp.Add(new Rectangle { Minx = 0, Miny = yy, Maxx = LatLonInfo.MaxLonValue, Maxy = yy });
-                }
-            }
+					temp.Add(new Rectangle { Minx = b.Minx, Miny = yy, Maxx = b.Maxx, Maxy = yy });
+				}
+				// World wrap issue when same latlon area visible multiple times
+				// Make sure line is drawn from left to right on screen
+				else
+				{
+					temp.Add(new Rectangle { Minx = LatLonInfo.MinLonValue, Miny = yy, Maxx = 0, Maxy = yy });
+					temp.Add(new Rectangle { Minx = 0, Miny = yy, Maxx = LatLonInfo.MaxLonValue, Maxy = yy });
+				}
+			}
 
 			var lines = new List<Line>();
 
-            // Normalize the lines and add as string
-            foreach (var line in temp)
-            {
-                var x = (line.Minx).NormalizeLongitude().DoubleToString();
-                var x2 = (line.Maxx).NormalizeLongitude().DoubleToString();
-                var y = (line.Miny).NormalizeLatitude().DoubleToString();
-                var y2 = (line.Maxy).NormalizeLatitude().DoubleToString();                
-                lines.Add(new Line { X = x, Y = y, X2 = x2, Y2 = y2 });
-            }
+			// Normalize the lines and add as string
+			foreach (var line in temp)
+			{
+				var x = (line.Minx).NormalizeLongitude().DoubleToString();
+				var x2 = (line.Maxx).NormalizeLongitude().DoubleToString();
+				var y = (line.Miny).NormalizeLatitude().DoubleToString();
+				var y2 = (line.Maxy).NormalizeLatitude().DoubleToString();
+				lines.Add(new Line { X = x, Y = y, X2 = x2, Y2 = y2 });
+			}
 			return lines;
-        }
-       
-
-        public override List<P> GetCluster(ClusterInfo clusterInfo)
-        {
-            return RunClusterAlgo(clusterInfo);
-        }
+		}
 
 
-        // Dictionary lookup key used by grid cluster algo
-        public static string GetId(int idx, int idy) //O(1)
-        {
-            return idx + ";" + idy;
-        }
+		public override IList<P> GetCluster(ClusterInfo clusterInfo)
+		{
+			return RunClusterAlgo(clusterInfo);
+		}
 
-        // Average running time (m*n)
-        // worst case might actually be 
-        // ~ O(n^2) if most of centroids are merged, due to centroid re-calculation, very very unlikely
-        void MergeClustersGrid()
-        {
-            foreach (var key in BucketsLookup.Keys)
-            {
-                var bucket = BucketsLookup[key];
-                if (!bucket.IsUsed) continue; // skip not used
 
-                var x = bucket.Idx;
-                var y = bucket.Idy;
+		// Dictionary lookup key used by grid cluster algo
+		public static string GetId(int idx, int idy) //O(1)
+		{
+			return string.Concat(idx, ";", idy);
+		}
 
-                // get keys for neighbors
-                var N = GetId(x, y + 1);
-                var NE = GetId(x + 1, y + 1);
-                var E = GetId(x + 1, y);
-                var SE = GetId(x + 1, y - 1);
-                var S = GetId(x, y - 1);
-                var SW = GetId(x - 1, y - 1);
-                var W = GetId(x - 1, y);
-                var NW = GetId(x - 1, y - 1);
-                var neighbors = new[] { N, NE, E, SE, S, SW, W, NW };
+		// Average running time (m*n)
+		// worst case might actually be 
+		// ~ O(n^2) if most of centroids are merged, due to centroid re-calculation, very very unlikely
+		void MergeClustersGrid()
+		{
+			foreach (var key in BucketsLookup.Keys)
+			{
+				var bucket = BucketsLookup[key];
+				if (!bucket.IsUsed) continue; // skip not used
 
-                MergeClustersGridHelper(key, neighbors);
-            }
-        }
-        void MergeClustersGridHelper(string currentKey, IEnumerable<string> neighborKeys)
-        {
-            double minDistX = DeltaX / AlgoConfig.Get.MergeWithin;
-            double minDistY = DeltaY / AlgoConfig.Get.MergeWithin;
-            // If clusters in grid are too close to each other, merge them
-            double withinDist = Math.Max(minDistX, minDistY);
+				var x = bucket.Idx;
+				var y = bucket.Idy;
 
-            foreach (var neighborKey in neighborKeys)
-            {
-                if (!BucketsLookup.ContainsKey(neighborKey)) continue;
+				// get keys for neighbors
+				var N = GetId(x, y + 1);
+				var NE = GetId(x + 1, y + 1);
+				var E = GetId(x + 1, y);
+				var SE = GetId(x + 1, y - 1);
+				var S = GetId(x, y - 1);
+				var SW = GetId(x - 1, y - 1);
+				var W = GetId(x - 1, y);
+				var NW = GetId(x - 1, y - 1);
+				var neighbors = new[] { N, NE, E, SE, S, SW, W, NW };
 
-                var neighbor = BucketsLookup[neighborKey];
-                if (neighbor.IsUsed == false) continue;
+				MergeClustersGridHelper(key, neighbors);
+			}
+		}
+		void MergeClustersGridHelper(string currentKey, IEnumerable<string> neighborKeys)
+		{
+			double minDistX = DeltaX / AlgoConfig.Get.MergeWithin;
+			double minDistY = DeltaY / AlgoConfig.Get.MergeWithin;
+			// If clusters in grid are too close to each other, merge them
+			double withinDist = Math.Max(minDistX, minDistY);
 
-                var current = BucketsLookup[currentKey];
-                var dist = MathTool.Distance(current.Centroid, neighbor.Centroid);
-                if (dist > withinDist) continue;
+			foreach (var neighborKey in neighborKeys)
+			{
+				if (!BucketsLookup.ContainsKey(neighborKey)) continue;
 
-                current.Points.AddRange(neighbor.Points);//O(n)
+				var neighbor = BucketsLookup[neighborKey];
+				if (neighbor.IsUsed == false) continue;
 
-                // recalc centroid
-                var cp = GetCentroidFromClusterLatLon(current.Points);
-                current.Centroid = cp;
-                neighbor.IsUsed = false; // merged, then not used anymore
-                neighbor.Points.Clear(); // clear mem
-            }
-        }
+				var current = BucketsLookup[currentKey];
+				var dist = MathTool.Distance(current.Centroid, neighbor.Centroid);
+				if (dist > withinDist) continue;
 
-        // To work properly it requires the p is already normalized
-        public static int[] GetPointMappedIds(P p, Boundary grid, double deltax, double deltay)
-        {
-            // Naive version, lon points near 180 and lat points near 90 are not clustered together
-            //idx = (int)(relativeX / deltax);
-            //idy = (int)(relativeY / deltay);
-            // end Naive version
+				current.Points.AddRange(neighbor.Points); //O(n)
 
-            /*
-            You have to draw a line with longitude values 180, -180 on papir to understand this            
+				// recalc centroid
+				var centroidPoint = GetCentroidFromClusterLatLon(current.Points);
+				current.Centroid = centroidPoint;
+				neighbor.IsUsed = false; // merged, then not used anymore
+				neighbor.Points.Clear(); // clear mem
+			}
+		}
+
+		// To work properly it requires the p is already normalized
+		protected static int[] GetPointMappedIds(P p, Boundary grid, double deltax, double deltay)
+		{
+			#region Naive			
+			// Naive version, lon points near 180 and lat points near 90 are not clustered together
+			//idx = (int)(relativeX / deltax);
+			//idy = (int)(relativeY / deltay);
+			//var relativeX = p.X - grid.Minx;
+			#endregion Naive
+
+			/*
+			You have to draw a line with longitude values 180, -180 on papir to understand this            
                 
-             e.g. _deltaX = 20
+			 e.g. _deltaX = 20
 longitude        150   170  180  -170   -150
-                 |      |          |     |
+				 |      |          |     |
                  
        
    idx =         7      8    9    -9    -8
-                            -10    
+							-10    
                                   
 here we want idx 8, 9, -10 and -9 be equal to each other, we set them to idx=8
 then the longitudes from 170 to -170 will be clustered together
-             */
+			 */
+			
+			var relativeY = p.Y - grid.Miny;
 
-            //var relativeX = p.X - grid.Minx;
-            var relativeY = p.Y - grid.Miny;
+			var overlapMapMinX = (int)(LatLonInfo.MinLonValue / deltax) - 1;
+			var overlapMapMaxX = (int)(LatLonInfo.MaxLonValue / deltax);
 
+			// The deltaX = 20 example scenario, then set the value 9 to 8 and -10 to -9            
 
-            var overlapMapMinX = (int)(LatLonInfo.MinLonValue / deltax) - 1;
-            var overlapMapMaxX = (int)(LatLonInfo.MaxLonValue / deltax);
+			// Similar to if (LatLonInfo.MaxLonValue % deltax == 0) without floating presicion issue
+			if (Math.Abs(LatLonInfo.MaxLonValue % deltax - 0) < Numbers.Epsilon)
+			{
+				overlapMapMaxX--;
+				overlapMapMinX++;
+			}
 
-            // The deltaX = 20 example scenario, then set the value 9 to 8 and -10 to -9            
+			var idxx = (int)(p.X / deltax);
+			if (p.X < 0) idxx--;
 
-            // Similar to if (LatLonInfo.MaxLonValue % deltax == 0) without floating presicion issue
-            if (Math.Abs(LatLonInfo.MaxLonValue % deltax - 0) < Numbers.Epsilon)
-            {
-                overlapMapMaxX--;
-                overlapMapMinX++;
-            }
+			if (Math.Abs(LatLonInfo.MaxLonValue % p.X - 0) < Numbers.Epsilon)
+			{
+				if (p.X < 0) idxx++;
+				else idxx--;
+			}
+			if (idxx == overlapMapMinX) idxx = overlapMapMaxX;
+			
+			var idx = idxx;
 
-            var idxx = (int)(p.X / deltax);
-            if (p.X < 0) idxx--;
+			// Latitude never wraps around with Google Maps, ignore 90, -90 wrap-around for latitude
+			var idy = (int)(relativeY / deltay);
 
-            if (Math.Abs(LatLonInfo.MaxLonValue % p.X - 0) < Numbers.Epsilon)
-            {
-                if (p.X < 0) idxx++;
-                else idxx--;
-            }
-            if (idxx == overlapMapMinX)
-            {
-                idxx = overlapMapMaxX;
-            }
-
-            var idx = idxx;
-
-            // Latitude never wraps around with Google Maps, ignore 90, -90 wrap-around for latitude
-            var idy = (int)(relativeY / deltay);
-
-            return new[] { idx, idy };
-        }
+			return new[] { idx, idy };
+		}
 
 
-        public List<P> RunClusterAlgo(ClusterInfo clusterInfo)
-        {                        
-            // Skip points outside the grid
-            IList<P> filtered = clusterInfo.IsFilterData ? FilterDataset(Dataset, Grid) : Dataset;
-                        
-            // Put points in buckets
-            foreach (var p in filtered)
-            {
-                var idxy = GetPointMappedIds(p, Grid, DeltaX, DeltaY);
-                var idx = idxy[0];
-                var idy = idxy[1];
+		public IList<P> RunClusterAlgo(ClusterInfo clusterInfo)
+		{
+			// Skip points outside the grid
+			IList<P> filtered = clusterInfo.IsFilterData ? FilterDataset(Dataset, Grid) : Dataset;
 
-                // Bucket id
-                var id = GetId(idx, idy);
+			// Put points in buckets
+			foreach (var p in filtered)
+			{
+				var idxy = GetPointMappedIds(p, Grid, DeltaX, DeltaY);
+				var idx = idxy[0];
+				var idy = idxy[1];
 
-                // Bucket exists, add point
-                if (BucketsLookup.ContainsKey(id))
-                {
-                    BucketsLookup[id].Points.Add(p);
-                }
-                // New bucket, create and add point
-                else
-                {
-                    var bucket = new Bucket(idx, idy, id);
-                    bucket.Points.Add(p);
-                    BucketsLookup.Add(id, bucket);
-                }
-            }
-           
-            // Calculate centroid for all buckets
-            SetCentroidForAllBuckets(BucketsLookup.Values);
-            
-            // Merge if gridpoint is to close
-            if (AlgoConfig.Get.DoMergeGridIfCentroidsAreCloseToEachOther) MergeClustersGrid();
+				// Bucket id
+				var id = GetId(idx, idy);
 
-            if (AlgoConfig.Get.DoUpdateAllCentroidsToNearestContainingPoint) UpdateAllCentroidsToNearestContainingPoint();
+				// Bucket exists, add point
+				if (BucketsLookup.ContainsKey(id))
+				{
+					BucketsLookup[id].Points.Add(p);
+				}
+				// New bucket, create and add point
+				else
+				{
+					var bucket = new Bucket(idx, idy, id);
+					bucket.Points.Add(p);
+					BucketsLookup.Add(id, bucket);
+				}
+			}
 
-            // Check again
-            // Merge if gridpoint is to close
-            if (AlgoConfig.Get.DoMergeGridIfCentroidsAreCloseToEachOther
-                && AlgoConfig.Get.DoUpdateAllCentroidsToNearestContainingPoint)
-            {
-                MergeClustersGrid();
-                // And again set centroid to closest point in bucket 
-                UpdateAllCentroidsToNearestContainingPoint();
-            }
-            
-            return GetClusterResult(Grid);
-        }
-    }
+			// Calculate centroid for all buckets
+			SetCentroidForAllBuckets(BucketsLookup.Values);
+
+			// Merge if gridpoint is to close
+			if (AlgoConfig.Get.DoMergeGridIfCentroidsAreCloseToEachOther) MergeClustersGrid();
+
+			if (AlgoConfig.Get.DoUpdateAllCentroidsToNearestContainingPoint) UpdateAllCentroidsToNearestContainingPoint();
+
+			// Check again
+			// Merge if gridpoint is to close
+			if (AlgoConfig.Get.DoMergeGridIfCentroidsAreCloseToEachOther
+				&& AlgoConfig.Get.DoUpdateAllCentroidsToNearestContainingPoint)
+			{
+				MergeClustersGrid();
+				// And again set centroid to closest point in bucket 
+				UpdateAllCentroidsToNearestContainingPoint();
+			}
+
+			return GetClusterResult(Grid);
+		}
+	}
 }

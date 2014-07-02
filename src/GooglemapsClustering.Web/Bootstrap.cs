@@ -3,7 +3,6 @@ using System.Web.Mvc;
 using Autofac;
 using Autofac.Integration.Mvc;
 using GooglemapsClustering.Clustering.Contract;
-using GooglemapsClustering.Clustering.Data;
 using GooglemapsClustering.Clustering.Data.Config;
 using GooglemapsClustering.Clustering.Data.Repository;
 using GooglemapsClustering.Clustering.Service;
@@ -11,8 +10,8 @@ using GooglemapsClustering.Clustering.Service;
 namespace GooglemapsClustering.Web
 {
 	/// <summary>
-	/// DI Container
-	/// Autofac
+	/// DI Container is used here mostly to make the code cleaner
+	/// Autofac	is used but can be replaced	with any other DI Container
 	/// </summary>
 	public class Bootstrap
 	{
@@ -34,7 +33,8 @@ namespace GooglemapsClustering.Web
 			builder.RegisterControllers(Assembly.GetExecutingAssembly());
 
 			// Important it is singleton!, loading the points from file can be slow and expensive
-			builder.Register(c => new MemoryDatabase(filePathToPoints, AlgoConfig.Get.Threads)).As<IMemoryDatabase>().SingleInstance(); 
+			builder.Register(c => new MemoryDatabase(filePathToPoints, AlgoConfig.Get.Threads))
+				.As<IMemoryDatabase>().SingleInstance(); 
 			
 			builder.RegisterType<MapService>().As<IMapService>();
 		}

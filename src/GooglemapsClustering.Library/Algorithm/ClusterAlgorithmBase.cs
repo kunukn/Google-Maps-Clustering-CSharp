@@ -32,7 +32,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
 			this.Dataset = threadData.AllPoints;
         }
 
-        public abstract List<P> GetCluster(ClusterInfo clusterInfo);
+        public abstract IList<P> GetCluster(ClusterInfo clusterInfo);
 
         public List<P> GetClusterResult(Boundary grid)
         {
@@ -69,6 +69,8 @@ namespace GooglemapsClustering.Clustering.Algorithm
         
         // Circular mean, very relevant for points around New Zealand, where lon -180 to 180 overlap
         // Adapted Centroid Calculation of N Points for Google Maps usage
+		// If you are working with points in a specific country only such as India then a simpler centroid calc can be used
+		// http://en.wikipedia.org/wiki/Centroid
         public static P GetCentroidFromClusterLatLon(List<P> list) //O(n)
         {
             int count;
@@ -133,14 +135,11 @@ namespace GooglemapsClustering.Clustering.Algorithm
             P closests = null;
             foreach (var p in list)
             {
-                var d = MathTool.Distance(from, p);
-                if (d >= min)
-                {
-                    continue;
-                }
+                var dist = MathTool.Distance(from, p);
+                if (dist >= min) continue;                
                     
                 // update
-                min = d;
+                min = dist;
                 closests = p;
             }
             return closests;

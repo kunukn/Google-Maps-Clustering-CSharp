@@ -58,7 +58,7 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 				if (points.Count > AlgoConfig.Get.MaxPointsInCache)
 				{
 					points = points.Take(AlgoConfig.Get.MaxPointsInCache).ToList();
-				}
+				}		
 
 				// Not important, can be deleted, only for ensuring visual randomness of marker display 
 				// when not all can be displayed on screen
