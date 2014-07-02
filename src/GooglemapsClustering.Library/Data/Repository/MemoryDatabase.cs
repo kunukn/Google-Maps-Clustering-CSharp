@@ -81,7 +81,7 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 
 				ThreadData.AllPoints = points.AsReadOnly();
 
-				if (ThreadData.Threads > 0)
+				if (ThreadData.Threads > 1)
 				{
 					// Thread related data
 					// Data are partitioned evenly to be used by the individual threads 

@@ -19,14 +19,14 @@
         <div id="gmcKN-map"></div>
 
         <div id="gmcKN-checkboxContainer">
-           
-            <!-- These id values are used by the js for filtering data request -->    
+
+            <!-- These id values are used by the js for filtering data request -->
             <ul>
                 <li><input type="checkbox" id="gmcKN-Type1" name="Type" value="Type1" checked="checked" /> <img src="~/assets/images/markers/court.png" alt="court" /></li>
                 <li><input type="checkbox" id="gmcKN-Type2" name="Type" value="Type2" checked="checked" /> <img src="~/assets/images/markers/firstaid.png" alt="firstaid" /></li>
                 <li><input type="checkbox" id="gmcKN-Type3" name="Type" value="Type3" checked="checked" /> <img src="~/assets/images/markers/house.png" alt="house" /></li>
                 <li><input type="checkbox" id="gmcKN-Lines" name="Type" value="Lines" /> <label>Lines</label> </li>
-            </ul>          
+            </ul>
             <span id="gmcKN-Clustering-span">
                 <input type="checkbox" id="gmcKN-Clustering" name="Type" value="Clustering" checked="checked" /> <label>Clustering</label>
             </span>
@@ -51,48 +51,51 @@
             $('#gmcKN-Clustering').click(function () { gmcKN.checkboxClicked('gmc_clustering'); });
 
         })(jQuery);
-    </script>         
-    
-    <script>  
+    </script>
+
+    <script>
         // http://css-tricks.com/snippets/jquery/draggable-without-jquery-ui/
         (function ($) {
-            $.fn.drags = function(opt) {
+            $.fn.drags = function (opt) {
                 opt = $.extend({ handle: "", cursor: "move" }, opt);
+                var $el;
+                
+                if (opt.handle === "") $el = this;
+                else $el = this.find(opt.handle);             
 
-                if (opt.handle === "") {
-                    var $el = this;
-                } else {
-                    var $el = this.find(opt.handle);
-                }
-
-                return $el.css('cursor', opt.cursor).on("mousedown", function(e) {
+                return $el.css('cursor', opt.cursor).on("mousedown", function (e) {
+                    var $drag;
                     if (opt.handle === "") {
-                        var $drag = $(this).addClass('draggable');
+                         $drag = $(this).addClass('draggable');
                     } else {
-                        var $drag = $(this).addClass('active-handle').parent().addClass('draggable');
+                         $drag = $(this).addClass('active-handle').parent().addClass('draggable');
                     }
+                    
+                    $drag.css('opacity', '0.50');
+                    
                     var z_idx = $drag.css('z-index'),
                         drg_h = $drag.outerHeight(),
                         drg_w = $drag.outerWidth(),
                         pos_y = $drag.offset().top + drg_h - e.pageY,
                         pos_x = $drag.offset().left + drg_w - e.pageX;
-                    $drag.css('z-index', 1000).parents().on("mousemove", function (e) {
-                        
+                    $drag.css('z-index', 1000).parents().on("mousemove", function (e) {                        
                         $('.draggable').offset({
                             top: e.pageY + pos_y - drg_h,
                             left: e.pageX + pos_x - drg_w
-                        }).on("mouseup", function() {
+                        }).on("mouseup", function () {
                             $(this).removeClass('draggable').css('z-index', z_idx);
                         });
                     });
                     e.preventDefault(); // disable selection
-                }).on("mouseup", function() {
+                }).on("mouseup", function () {
                     if (opt.handle === "") {
                         $(this).removeClass('draggable');
                     } else {
                         $(this).removeClass('active-handle').parent().removeClass('draggable');
                     }
-                });                             
+                    
+                    $(this).css('opacity', '0.85');
+                });
             };
 
             $('#gmcKN-checkboxContainer').drags();
