@@ -33,6 +33,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Algorithm\ClusterAlgorithmBase.cs" />
     <Compile Include="Algorithm\GridCluster.cs" />
+    <Compile Include="Contract\IMemCache.cs" />
     <Compile Include="Contract\IP.cs" />
     <Compile Include="Contract\ICluster.cs" />
     <Compile Include="Contract\IAlgoConfig.cs" />
@@ -70,6 +72,7 @@
     <Compile Include="Extensions\MonadExtension.cs" />
     <Compile Include="Extensions\IEnumerableExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\MemCache.cs" />
     <Compile Include="Utility\ClusterUtil.cs" />
     <Compile Include="Extensions\DataExtension.cs" />
     <Compile Include="Utility\Dataset.cs" />

@@ -17,11 +17,13 @@ namespace GooglemapsClustering.Clustering.Service
 	public class MapService : IMapService
 	{
 		private readonly IMemoryDatabase _memoryDatabase;
+		private readonly IMemCache _memCache;
 		private readonly int _threads;
 
-		public MapService(IMemoryDatabase memoryDatabase)
+		public MapService(IMemoryDatabase memoryDatabase, IMemCache memCache)
 		{
 			_memoryDatabase = memoryDatabase;
+			_memCache = memCache;
 			_threads = _memoryDatabase.Threads;
 		}
 
@@ -55,6 +57,13 @@ namespace GooglemapsClustering.Clustering.Service
 
 				jsonReceive.Viewport.ValidateLatLon(); // Validate google map viewport input (should be always valid)
 				jsonReceive.Viewport.Normalize();
+
+
+				// todo use memcache to returned allready cached result
+				// if client ne and sw is inside a specific grid box then cache the grid box and the result
+				// next time test if ne and sw is inside the grid box and return the cached result			
+				// use ReadThroughCache()
+
 
 				// Get all points from memory
 				ThreadData threadData = _memoryDatabase.GetThreadData();
@@ -191,6 +200,19 @@ namespace GooglemapsClustering.Clustering.Service
 				FirstPoint = _memoryDatabase.GetPoints().FirstOrDefault()
 			};
 
+		}
+
+		private T ReadThroughCache<T>(string key) 
+			where T : class, new()
+
+		{
+			var data = _memCache.Get<T>(key);
+			if (data == null)
+			{
+				data = new T();  // todo finish imple with actual type
+				if(data!=null) _memCache.Add(data, key, TimeSpan.FromSeconds(10));
+			}
+			return data;
 		}
 	}
 }
