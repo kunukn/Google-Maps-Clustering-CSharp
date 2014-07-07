@@ -47,8 +47,9 @@
     <Compile Include="Contract\IP.cs" />
     <Compile Include="Contract\ICluster.cs" />
     <Compile Include="Contract\IAlgoConfig.cs" />
-    <Compile Include="Contract\IMemoryDatabase.cs" />
+    <Compile Include="Contract\IPointsDatabase.cs" />
     <Compile Include="Contract\IMapService.cs" />
+    <Compile Include="Data\CacheKeys.cs" />
     <Compile Include="Data\Config\AlgoConfig.cs" />
     <Compile Include="Data\Algo\Boundary.cs" />
     <Compile Include="Data\Algo\Bucket.cs" />
@@ -63,7 +64,7 @@
     <Compile Include="Data\Json\JsonReplyBase.cs" />
     <Compile Include="Data\Geometry\LatLonInfo.cs" />
     <Compile Include="Data\Geometry\Line.cs" />
-    <Compile Include="Data\Repository\MemoryDatabase.cs" />
+    <Compile Include="Data\Repository\PointsDatabase.cs" />
     <Compile Include="Data\Geometry\Numbers.cs" />
     <Compile Include="Data\Geometry\P.cs" />
     <Compile Include="Data\Geometry\PBase.cs" />

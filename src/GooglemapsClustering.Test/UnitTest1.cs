@@ -17,7 +17,7 @@ namespace GooglemapsClustering.Test
 	public class UnitTest1
 	{
 		static Bootstrap bootstrap;
-		static IMemoryDatabase memoryDatabase; // only loading points from file once, thus static
+		static IPointsDatabase memoryDatabase; // only loading points from file once, thus static
 		IMapService mapService;
 
 		[TestInitialize()]
@@ -30,7 +30,7 @@ namespace GooglemapsClustering.Test
 			// Composition root, using same setup as web
 			bootstrap = bootstrap ?? new Bootstrap();
 			bootstrap.Configure("TestData/Points.csv");
-			memoryDatabase = memoryDatabase ?? bootstrap.Container.Resolve<IMemoryDatabase>();
+			memoryDatabase = memoryDatabase ?? bootstrap.Container.Resolve<IPointsDatabase>();
 			mapService = mapService ?? bootstrap.Container.Resolve<IMapService>();
 		}
 

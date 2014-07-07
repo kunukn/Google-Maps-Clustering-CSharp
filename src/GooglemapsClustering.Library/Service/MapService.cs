@@ -16,11 +16,11 @@ namespace GooglemapsClustering.Clustering.Service
 {
 	public class MapService : IMapService
 	{
-		private readonly IMemoryDatabase _memoryDatabase;
+		private readonly IPointsDatabase _memoryDatabase;
 		private readonly IMemCache _memCache;
 		private readonly int _threads;
 
-		public MapService(IMemoryDatabase memoryDatabase, IMemCache memCache)
+		public MapService(IPointsDatabase memoryDatabase, IMemCache memCache)
 		{
 			_memoryDatabase = memoryDatabase;
 			_memCache = memCache;
@@ -56,7 +56,7 @@ namespace GooglemapsClustering.Clustering.Service
 				// values are validated there
 				var jsonReceive = new JsonGetMarkersReceive(nelat, nelon, swlat, swlon, zoomLevel, filter);
 
-				var cacheKey = string.Concat("gmcKN", "GetMarkers", jsonReceive.GetHashCode());
+				var cacheKey = CacheKeys.GetMarkers(jsonReceive.GetHashCode());
 				var reply = _memCache.Get<JsonMarkersReply>(cacheKey);
 				if (reply != null)
 				{
@@ -165,7 +165,7 @@ namespace GooglemapsClustering.Clustering.Service
 			{
 				var uid = int.Parse(id);
 
-				var cacheKey = string.Concat("gmcKN", "GetMarkerInfo", uid);
+				var cacheKey = CacheKeys.GetMarkerInfo(uid);
 				var reply = _memCache.Get<JsonMarkerInfoReply>(cacheKey);
 				if (reply != null)
 				{

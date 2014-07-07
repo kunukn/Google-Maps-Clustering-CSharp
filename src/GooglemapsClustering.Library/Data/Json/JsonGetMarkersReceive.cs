@@ -11,7 +11,7 @@ namespace GooglemapsClustering.Clustering.Data.Json
 	/// </summary>
 	public class JsonGetMarkersReceive
 	{
-		// Data range are restricted if user abuse client side
+		// Data range are restricted if user abuse client-side
 		private const int ZoomLevelMax = 30;		
 		public Boundary Viewport { get; private set; }
 

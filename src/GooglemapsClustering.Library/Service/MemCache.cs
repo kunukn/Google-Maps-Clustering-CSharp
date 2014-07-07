@@ -11,31 +11,31 @@ namespace GooglemapsClustering.Clustering.Service
 	/// </summary>
 	public class MemCache : IMemCache
 	{
-		private  readonly ObjectCache Cache = MemoryCache.Default;
+		private  readonly ObjectCache _cache = MemoryCache.Default;
 
 		public  T Get<T>(string key) where T : class
 		{
-			try	{return Cache[key] as T;}
+			try	{return _cache[key] as T;}
 			catch {return null;}
 		}
 
-		public  bool Add(object objectToCache, string key, TimeSpan timespan)
+		public  bool Add<T>(T objectToCache, string key, TimeSpan timespan)
 		{
-			return Cache.Add(key, objectToCache, DateTime.Now.Add(timespan));
+			return _cache.Add(key, objectToCache, DateTime.Now.Add(timespan));
 		}
 
 		public  object Clear(string key)
 		{
-			return Cache.Remove(key);
+			return _cache.Remove(key);
 		}
 		public  bool Exists(string key)
 		{
-			return Cache.Get(key) != null;
+			return _cache.Get(key) != null;
 		}
 
 		public  IList<string> GetAllKeys()
 		{
-			return Cache.Select(keyValuePair => keyValuePair.Key).ToList();
+			return _cache.Select(keyValuePair => keyValuePair.Key).ToList();
 		}		
 	}
 }

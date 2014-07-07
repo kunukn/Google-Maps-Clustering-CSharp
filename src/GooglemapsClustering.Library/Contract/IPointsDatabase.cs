@@ -4,7 +4,7 @@ using GooglemapsClustering.Clustering.Data.Geometry;
 
 namespace GooglemapsClustering.Clustering.Contract
 {
-	public interface IMemoryDatabase
+	public interface IPointsDatabase
 	{
 		IList<P> GetPoints();
 		IList<P>[] GetThreadPoints();

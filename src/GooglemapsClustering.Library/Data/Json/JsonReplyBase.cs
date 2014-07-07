@@ -10,8 +10,7 @@
 
         protected JsonReplyBase()
         {            
-            Ok = "1";
-			//EMsg = string.Empty;
+            Ok = "1";			
         }
     }
 }

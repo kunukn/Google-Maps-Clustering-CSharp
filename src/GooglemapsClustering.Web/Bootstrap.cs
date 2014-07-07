@@ -32,12 +32,15 @@ namespace GooglemapsClustering.Web
 		{
 			builder.RegisterControllers(Assembly.GetExecutingAssembly());
 
-			// Important it is singleton!, loading the points from file can be slow and expensive
-			builder.Register(c => new MemoryDatabase(filePathToPoints, AlgoConfig.Get.Threads))
-				.As<IMemoryDatabase>().SingleInstance();
+			builder.RegisterType<MemCache>().As<IMemCache>();
 
-			builder.RegisterType<MemCache>().As<IMemCache>().SingleInstance();
-			builder.RegisterType<MapService>().As<IMapService>().SingleInstance();
+			// Important it is singleton, loading the points from file can be slow and expensive
+			builder.RegisterType<PointsDatabase>().As<IPointsDatabase>()
+				 .WithParameter("filepath", filePathToPoints)
+				 .WithParameter("threads", AlgoConfig.Get.Threads)
+				.SingleInstance();
+
+			builder.RegisterType<MapService>().As<IMapService>().SingleInstance(); // only getters, thus singleton
 		}
 	}
 }

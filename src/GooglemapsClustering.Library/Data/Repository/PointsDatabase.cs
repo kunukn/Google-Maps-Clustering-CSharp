@@ -5,17 +5,20 @@ using System.Linq;
 using GooglemapsClustering.Clustering.Contract;
 using GooglemapsClustering.Clustering.Data.Config;
 using GooglemapsClustering.Clustering.Data.Geometry;
+using GooglemapsClustering.Clustering.Extensions;
 
 namespace GooglemapsClustering.Clustering.Data.Repository
 {
 	/// <summary>
 	/// The database for all the existing points
 	/// </summary>
-	public class MemoryDatabase : IMemoryDatabase
+	public class PointsDatabase : IPointsDatabase
 	{
+		
 		public readonly string FilePath;
 		public readonly TimeSpan LoadTime;
 		public readonly ThreadData ThreadData;
+
 		private readonly object _lock = new object();
 
 		public IList<P> GetPoints()
@@ -38,10 +41,17 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 			get { return ThreadData.Threads; }
 		}
 
-		public MemoryDatabase(string filepath, int threads)
-		{
+		public PointsDatabase(IMemCache memCache, string filepath, int threads)
+		{			
+			ThreadData = memCache.Get<ThreadData>(CacheKeys.PointsDatabase);
+			if (ThreadData != null) return;	// cache hit
+
 			lock (_lock)
 			{
+				// if 2nd threads gets here then it should be cache hit
+				ThreadData = memCache.Get<ThreadData>(CacheKeys.PointsDatabase);
+				if (ThreadData != null) return;
+
 				var sw = new Stopwatch();
 				sw.Start();
 
@@ -50,7 +60,7 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 
 				// Load from file
 				List<P> points = Utility.Dataset.LoadDataset(FilePath);
-				if (!points.Any())
+				if (points.None())
 				{
 					throw new Exception(string.Format("Data was not loaded from file: {0}", FilePath));
 				}
@@ -115,7 +125,9 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 							ThreadData.ThreadPoints[i] = (ThreadData.ThreadPoints[i] as List<P>).AsReadOnly();
 						}
 					}
-				}				
+				}
+
+				memCache.Add<ThreadData>(ThreadData, CacheKeys.PointsDatabase, TimeSpan.FromHours(24));
 
 				sw.Stop();
 				LoadTime = sw.Elapsed;
