@@ -16,15 +16,15 @@ namespace GooglemapsClustering.Clustering.Service
 {
 	public class MapService : IMapService
 	{
-		private readonly IPointsDatabase _memoryDatabase;
+		private readonly IPointsDatabase _pointsDatabase;
 		private readonly IMemCache _memCache;
 		private readonly int _threads;
 
-		public MapService(IPointsDatabase memoryDatabase, IMemCache memCache)
+		public MapService(IPointsDatabase pointsDatabase, IMemCache memCache)
 		{
-			_memoryDatabase = memoryDatabase;
+			_pointsDatabase = pointsDatabase;
 			_memCache = memCache;
-			_threads = _memoryDatabase.Threads;
+			_threads = _pointsDatabase.Threads;
 		}
 
 		public JsonMarkersReply GetMarkers(JsonGetMarkersInput input)
@@ -70,7 +70,7 @@ namespace GooglemapsClustering.Clustering.Service
 				jsonReceive.Viewport.Normalize();
 
 				// Get all points from memory
-				ThreadData threadData = _memoryDatabase.GetThreadData();
+				ThreadData threadData = _pointsDatabase.GetThreadData();
 
 				#region fiter
 
@@ -174,7 +174,7 @@ namespace GooglemapsClustering.Clustering.Service
 					return reply;
 				}
 
-				P marker = _memoryDatabase.GetPoints().SingleOrDefault(i => i.I == uid);
+				P marker = _pointsDatabase.GetPoints().SingleOrDefault(i => i.I == uid);
 
 				reply = new JsonMarkerInfoReply { Id = id };
 				reply.BuildContent(marker);
@@ -208,8 +208,8 @@ namespace GooglemapsClustering.Clustering.Service
 		{
 			return new JsonInfoReply
 			{
-				DbSize = _memoryDatabase.GetPoints().Count,
-				FirstPoint = _memoryDatabase.GetPoints().FirstOrDefault()
+				DbSize = _pointsDatabase.GetPoints().Count,
+				FirstPoint = _pointsDatabase.GetPoints().FirstOrDefault()
 			};
 
 		}

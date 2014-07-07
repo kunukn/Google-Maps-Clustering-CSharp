@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace GooglemapsClustering.Clustering.Contract
 {
@@ -8,7 +7,6 @@ namespace GooglemapsClustering.Clustering.Contract
 		T Get<T>(string key) where T : class;
 		bool Add<T>(T objectToCache, string key, TimeSpan timespan);
 		object Clear(string key);
-		bool Exists(string key);
-		IList<string> GetAllKeys();
+		bool Exists(string key);		
 	}
 }
