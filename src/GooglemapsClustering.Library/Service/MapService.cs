@@ -37,33 +37,37 @@ namespace GooglemapsClustering.Clustering.Service
 			reply.Msec = sw.Elapsed.ToString();
 			return reply;
 		}
+		/// <summary>
+		/// Read Through Cache
+		/// </summary>
+		/// <param name="input"></param>
+		/// <returns></returns>
 		public JsonMarkersReply GetMarkersHelper(JsonGetMarkersInput input)
 		{
-			var invalid = new JsonMarkersReply { Ok = "0" };
 			try
 			{
-				var nelat = input.nelat.ToDouble();
-				var nelon = input.nelon.ToDouble();
-				var swlat = input.swlat.ToDouble();
-				var swlon = input.swlon.ToDouble();
+				var nelat = Math.Round(input.nelat.ToDouble(), Numbers.Round);
+				var nelon = Math.Round(input.nelon.ToDouble(), Numbers.Round);
+				var swlat = Math.Round(input.swlat.ToDouble(), Numbers.Round);
+				var swlon = Math.Round(input.swlon.ToDouble(), Numbers.Round);
 				var zoomLevel = int.Parse(input.zoomLevel);
 				var filter = input.filter ?? "";
 
 				// values are validated there
 				var jsonReceive = new JsonGetMarkersReceive(nelat, nelon, swlat, swlon, zoomLevel, filter);
 
-				
-				JsonMarkersReply reply;
+				var cacheKey = string.Concat("gmcKN", "GetMarkers", jsonReceive.GetHashCode());
+				var reply = _memCache.Get<JsonMarkersReply>(cacheKey);
+				if (reply != null)
+				{
+					// return cached data
+					reply.Cache = true;
+					return reply; 
+				}
+
 
 				jsonReceive.Viewport.ValidateLatLon(); // Validate google map viewport input (should be always valid)
 				jsonReceive.Viewport.Normalize();
-
-
-				// todo use memcache to returned allready cached result
-				// if client ne and sw is inside a specific grid box then cache the grid box and the result
-				// next time test if ne and sw is inside the grid box and return the cached result			
-				// use ReadThroughCache()
-
 
 				// Get all points from memory
 				ThreadData threadData = _memoryDatabase.GetThreadData();
@@ -79,7 +83,6 @@ namespace GooglemapsClustering.Clustering.Service
 				#endregion filter
 
 
-
 				// Create new instance for every ajax request with input all points and json data
 				ICluster clusterAlgo = new GridCluster(threadData, jsonReceive);
 
@@ -92,42 +95,46 @@ namespace GooglemapsClustering.Clustering.Service
 					#region cluster
 
 					IList<P> markers = clusterAlgo.GetCluster(
-						new ClusterInfo {ZoomLevel = jsonReceive.Zoomlevel}
+						new ClusterInfo { ZoomLevel = jsonReceive.Zoomlevel }
 						);
 
 					#endregion cluster
 
-
-					// Prepare data to the client
 					reply = new JsonMarkersReply
 					{
 						Markers = markers,
 						Polylines = clusterAlgo.GetPolyLines(),
 					};
+				}
+				else
+				{
+					// If we are here then there are no clustering
+					// The number of items returned is restricted to avoid json data overflow
+					IList<P> filteredDataset = ClusterAlgorithmBase.FilterDataset(threadData.AllPoints, jsonReceive.Viewport);
+					IList<P> filteredDatasetMaxPoints = filteredDataset.Take(AlgoConfig.Get.MaxMarkersReturned).ToList();
 
-					// Return client data
-					return reply;
+					reply = new JsonMarkersReply
+					{
+						Markers = filteredDatasetMaxPoints,
+						Polylines = clusterAlgo.GetPolyLines(),
+						Mia = filteredDataset.Count - filteredDatasetMaxPoints.Count,
+					};
 				}
 
+				//// todo adjust cacheKey before using caching for this method, use grid-id convertion for NE and SW user input
+				//// if client ne and sw is inside a specific grid box then cache the grid box and the result
+				//// next time test if ne and sw is inside the grid box and return the cached result				
+				//_memCache.Add(reply, cacheKey, TimeSpan.FromMinutes(10)); // cache data
 
-				// If we are here then there are no clustering
-				// The number of items returned is restricted to avoid json data overflow
-				IList<P> filteredDataset = ClusterAlgorithmBase.FilterDataset(threadData.AllPoints, jsonReceive.Viewport);
-				IList<P> filteredDatasetMaxPoints = filteredDataset.Take(AlgoConfig.Get.MaxMarkersReturned).ToList();
-
-				reply = new JsonMarkersReply
-				{
-					Markers = filteredDatasetMaxPoints,
-					Polylines = clusterAlgo.GetPolyLines(),
-					Mia = filteredDataset.Count - filteredDatasetMaxPoints.Count,
-				};
 				return reply;
 			}
 			catch (Exception ex)
 			{
-				invalid.EMsg = string.Format("MapService says: exception {0}",
-					ex.Message);
-				return invalid;
+				return new JsonMarkersReply
+				{
+					Ok = "0",
+					EMsg = string.Format("MapService says: exception {0}", ex.Message)
+				};
 			}
 		}
 
@@ -142,43 +149,48 @@ namespace GooglemapsClustering.Clustering.Service
 			reply.Msec = sw.Elapsed.ToString();
 			return reply;
 		}
+
+		/// <summary>
+		/// Read Through Cache
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
 		public JsonMarkerInfoReply GetMarkerInfoHelper(string id)
 		{
-			var invalid = new JsonMarkerInfoReply { Ok = "0" };
-
 			if (string.IsNullOrWhiteSpace(id))
 			{
-				invalid.EMsg = "MapService says: params is invalid";
-				return invalid;
+				return new JsonMarkerInfoReply { Ok = "0", EMsg = "MapService says: params is invalid" };
 			}
 			try
 			{
-				var sw = new Stopwatch();
-				sw.Start();
-
 				var uid = int.Parse(id);
 
-				var marker = _memoryDatabase.GetPoints().SingleOrDefault(i => i.I == uid); // O(n)
-				if (marker == null)
+				var cacheKey = string.Concat("gmcKN", "GetMarkerInfo", uid);
+				var reply = _memCache.Get<JsonMarkerInfoReply>(cacheKey);
+				if (reply != null)
 				{
-					return new JsonMarkerInfoReply
-					{
-						Id = id,
-						Content = "Marker could not be found",
-					};
+					// return cached data
+					reply.Cache = true;
+					return reply;
 				}
 
-				var reply = new JsonMarkerInfoReply();
+				P marker = _memoryDatabase.GetPoints().SingleOrDefault(i => i.I == uid);
+
+				reply = new JsonMarkerInfoReply { Id = id };
 				reply.BuildContent(marker);
+
+				_memCache.Add(reply, cacheKey, TimeSpan.FromMinutes(10)); // cache data
+
 				return reply;
 			}
 			catch (Exception ex)
 			{
-				invalid.EMsg = string.Format("MapService says: Parsing error param: {0}",
-					ex.Message);
+				return new JsonMarkerInfoReply
+				{
+					Ok = "0",
+					EMsg = string.Format("MapService says: Parsing error param: {0}", ex.Message)
+				};
 			}
-
-			return invalid;
 		}
 
 
@@ -202,15 +214,16 @@ namespace GooglemapsClustering.Clustering.Service
 
 		}
 
-		private T ReadThroughCache<T>(string key) 
-			where T : class, new()
 
+
+		private T ReadThroughCache<T>(string key, Func<T> fn, TimeSpan cacheSpan)
+			where T : class, new()
 		{
 			var data = _memCache.Get<T>(key);
 			if (data == null)
 			{
-				data = new T();  // todo finish imple with actual type
-				if(data!=null) _memCache.Add(data, key, TimeSpan.FromSeconds(10));
+				data = fn.Invoke();
+				if (data != null) _memCache.Add(data, key, cacheSpan);
 			}
 			return data;
 		}

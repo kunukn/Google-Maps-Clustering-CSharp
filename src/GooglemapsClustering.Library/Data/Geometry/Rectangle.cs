@@ -15,5 +15,10 @@ namespace GooglemapsClustering.Clustering.Data.Geometry
             return string.Format("minx: {0} miny: {1} maxx: {2} maxy: {3}", 
                 Minx, Miny, Maxx, Maxy);
         }
+
+	    public override int GetHashCode()
+	    {
+			return string.Format("{0}_{1}_{2}_{3}", Minx, Maxx, Miny, Maxy).GetHashCode();
+	    }
     }
 }

@@ -13,8 +13,12 @@ namespace GooglemapsClustering.Clustering.Data.Json
         public double Lon { get; set; }                                
 
         public void BuildContent(P p)
-        {            
-            if(p==null) return;
+        {
+	        if (p == null)
+	        {
+				Content = "Marker could not be found";
+		        return;
+	        }
 
             Id = p.I.ToString();
             Type = p.T;
