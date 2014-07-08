@@ -5,7 +5,6 @@ using System.Linq;
 using GooglemapsClustering.Clustering.Algorithm;
 using GooglemapsClustering.Clustering.Contract;
 using GooglemapsClustering.Clustering.Data;
-using GooglemapsClustering.Clustering.Data.Algo;
 using GooglemapsClustering.Clustering.Data.Config;
 using GooglemapsClustering.Clustering.Data.Geometry;
 using GooglemapsClustering.Clustering.Data.Json;
@@ -94,9 +93,7 @@ namespace GooglemapsClustering.Clustering.Service
 				{
 					#region cluster
 
-					IList<P> markers = clusterAlgo.GetCluster(
-						new ClusterInfo { ZoomLevel = jsonReceive.Zoomlevel }
-						);
+					IList<P> markers = clusterAlgo.RunCluster();
 
 					#endregion cluster
 

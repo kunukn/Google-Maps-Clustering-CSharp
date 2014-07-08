@@ -30,9 +30,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
             }
 			this.ThreadData = threadData;
 			this.Dataset = threadData.AllPoints;
-        }
-
-        public abstract IList<P> GetCluster(ClusterInfo clusterInfo);
+        }        
 
         public List<P> GetClusterResult(Boundary grid)
         {

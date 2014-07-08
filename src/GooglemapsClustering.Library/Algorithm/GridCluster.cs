@@ -163,14 +163,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
 				lines.Add(new Line { X = x, Y = y, X2 = x2, Y2 = y2 });
 			}
 			return lines;
-		}
-
-
-		public override IList<P> GetCluster(ClusterInfo clusterInfo)
-		{
-			return RunClusterAlgo(clusterInfo);
-		}
-
+		}		
 
 		// Dictionary lookup key used by grid cluster algo
 		public static string GetId(int idx, int idy) //O(1)
@@ -236,7 +229,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
 		// To work properly it requires the p is already normalized
 		protected static int[] GetPointMappedIds(P p, Boundary grid, double deltax, double deltay)
 		{
-			#region Naive			
+			#region Naive
 			// Naive version, lon points near 180 and lat points near 90 are not clustered together
 			//idx = (int)(relativeX / deltax);
 			//idy = (int)(relativeY / deltay);
@@ -257,7 +250,7 @@ longitude        150   170  180  -170   -150
 here we want idx 8, 9, -10 and -9 be equal to each other, we set them to idx=8
 then the longitudes from 170 to -170 will be clustered together
 			 */
-			
+
 			var relativeY = p.Y - grid.Miny;
 
 			var overlapMapMinX = (int)(LatLonInfo.MinLonValue / deltax) - 1;
@@ -281,7 +274,7 @@ then the longitudes from 170 to -170 will be clustered together
 				else idxx--;
 			}
 			if (idxx == overlapMapMinX) idxx = overlapMapMaxX;
-			
+
 			var idx = idxx;
 
 			// Latitude never wraps around with Google Maps, ignore 90, -90 wrap-around for latitude
@@ -291,10 +284,12 @@ then the longitudes from 170 to -170 will be clustered together
 		}
 
 
-		public IList<P> RunClusterAlgo(ClusterInfo clusterInfo)
+		public IList<P> RunCluster()
 		{
 			// Skip points outside the grid
-			IList<P> filtered = clusterInfo.IsFilterData ? FilterDataset(Dataset, Grid) : Dataset;
+			IList<P> filtered = ClusterInfo.DoFilterData(this._jsonReceive.Zoomlevel)
+				? FilterDataset(Dataset, Grid)
+				: Dataset;
 
 			// Put points in buckets
 			foreach (var p in filtered)
