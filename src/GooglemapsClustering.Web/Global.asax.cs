@@ -12,7 +12,7 @@ namespace GooglemapsClustering.Web
 			RegisterRoutes(RouteTable.Routes);
 
 			// DI Container
-			new Bootstrap().Configure(
+			new Bootstrap().Configure(filePathToPoints:
 				string.Concat(HttpContext.Current.Server.MapPath("~"), @"App_Data\Points.csv"));
 		}
 

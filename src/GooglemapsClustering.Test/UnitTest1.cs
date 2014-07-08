@@ -27,7 +27,7 @@ namespace GooglemapsClustering.Test
 			//memoryDatabase = memoryDatabase ?? new MemoryDatabase("TestData/Points.csv");
 			//mapService = mapService ?? new MapService(memoryDatabase);
 
-			// Composition root, using same setup as web
+			// Composition root-ish, using same setup as web
 			bootstrap = bootstrap ?? new Bootstrap();
 			bootstrap.Configure("TestData/Points.csv");
 			memoryDatabase = memoryDatabase ?? bootstrap.Container.Resolve<IPointsDatabase>();
