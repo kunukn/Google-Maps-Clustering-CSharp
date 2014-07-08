@@ -138,10 +138,10 @@ var gmcKN; // global var
             events: {
                 getBounds: function () {
 
-                    var bounds = gmcKN.map.getBounds();
-                    var NE = bounds.getNorthEast();
-                    var SW = bounds.getSouthWest();
-                    var mapData = [];
+                    var bounds = gmcKN.map.getBounds()
+                    , NE = bounds.getNorthEast()
+                    , SW = bounds.getSouthWest()
+                    , mapData = [];
                     
                     // http://gis.stackexchange.com/questions/8650/how-to-measure-the-accuracy-of-latitude-and-longitude                    
                     mapData.neLat = gmcKN.round(NE.lat(), 7); // round to precision needed
@@ -179,12 +179,12 @@ var gmcKN; // global var
                         );
 
                     var pinImg = new google.maps.MarkerImage(gmcKN.mymap.settings.pinImage.src,
-                        new google.maps.Size(gmcKN.mymap.settings.pinImage.width, gmcKN.mymap.settings.pinImage.height), null, null);
-                    var pinImg1 = new google.maps.MarkerImage(gmcKN.mymap.settings.pinImage1.src,
-                        new google.maps.Size(gmcKN.mymap.settings.pinImage1.width, gmcKN.mymap.settings.pinImage1.height), null, null);
-                    var pinImg2 = new google.maps.MarkerImage(gmcKN.mymap.settings.pinImage2.src,
-                        new google.maps.Size(gmcKN.mymap.settings.pinImage2.width, gmcKN.mymap.settings.pinImage2.height), null, null);
-                    var pinImg3 = new google.maps.MarkerImage(gmcKN.mymap.settings.pinImage3.src,
+                        new google.maps.Size(gmcKN.mymap.settings.pinImage.width, gmcKN.mymap.settings.pinImage.height), null, null)
+                    , pinImg1 = new google.maps.MarkerImage(gmcKN.mymap.settings.pinImage1.src,
+                        new google.maps.Size(gmcKN.mymap.settings.pinImage1.width, gmcKN.mymap.settings.pinImage1.height), null, null)
+                    , pinImg2 = new google.maps.MarkerImage(gmcKN.mymap.settings.pinImage2.src,
+                        new google.maps.Size(gmcKN.mymap.settings.pinImage2.width, gmcKN.mymap.settings.pinImage2.height), null, null)
+                    , pinImg3 = new google.maps.MarkerImage(gmcKN.mymap.settings.pinImage3.src,
                         new google.maps.Size(gmcKN.mymap.settings.pinImage3.width, gmcKN.mymap.settings.pinImage3.height), null, null);
 
 
@@ -221,8 +221,9 @@ var gmcKN; // global var
                                 + data.Count + ' ' + mia;
                             
                             document.getElementById('gmcKN-response-time').innerHTML = '&nbsp;' + data.Msec;
-                            
 
+                            document.getElementById('gmcKN-cacheInfo').innerHTML = '&nbsp;Cache hit: ' + (data.Cache ? "true" : "false");
+                            
                             // grid lines clear current
                             $.each(gmcKN.mymap.events.polys, function () {
                                 this.setMap(null); // clear prev lines
@@ -328,7 +329,6 @@ var gmcKN; // global var
                             document.getElementById('gmcKN-errorMsg').innerHTML = msg;
                         }
                     });
-
                 },
 
                 // marker detail
@@ -349,6 +349,8 @@ var gmcKN; // global var
                             }
 
                             document.getElementById('gmcKN-response-time').innerHTML = '&nbsp;' + data.Msec;
+
+                            document.getElementById('gmcKN-cacheInfo').innerHTML = '&nbsp;Cache hit: ' + (data.Cache ? "true" : "false");
 
                             gmcKN.infowindow.setContent(data.Content);
                             gmcKN.infowindow.open(gmcKN.map, marker);
@@ -384,17 +386,17 @@ var gmcKN; // global var
             var s = '';
             
             // This is strongly coupled with the html dom, maybe refactor
-            var cb1 = $(s = '#gmcKN-Clustering') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb2 = $(s = '#gmcKN-Lines')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb3 = $(s = '#gmcKN-Type1')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb4 = $(s = '#gmcKN-Type2')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb5 = $(s = '#gmcKN-Type3')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb6 = $(s = '#gmcKN_Type4')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb7 = $(s = '#gmcKN_Type5')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb8 = $(s = '#gmcKN_Type6')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb9 = $(s = '#gmcKN_Type7')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb10 = $(s = '#gmcKN_Type8')    ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
-            var cb11 = $(s = '#gmcKN_Type9')    ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
+            var cb1 = $(s = '#gmcKN-Clustering') ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+            , cb2 = $(s = '#gmcKN-Lines')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+            , cb3 = $(s = '#gmcKN-Type1')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+            , cb4 = $(s = '#gmcKN-Type2')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+            , cb5 = $(s = '#gmcKN-Type3')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+            , cb6 = $(s = '#gmcKN_Type4')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+            , cb7 = $(s = '#gmcKN_Type5')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+            , cb8 = $(s = '#gmcKN_Type6')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+            , cb9 = $(s = '#gmcKN_Type7')     ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+            , cb10 = $(s = '#gmcKN_Type8')    ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0
+            , cb11 = $(s = '#gmcKN_Type9')    ? ($(s).attr('checked') === 'checked' ? 1 : 0) : 0;
             
             // binary sum for toggle values, take less space in string request
             var filter = gmcKN.toggleVal([cb1, cb2, cb3, cb4, cb5, cb6, cb7, cb8, cb9, cb10, cb11]);
@@ -429,10 +431,10 @@ var gmcKN; // global var
 
         // Only update new markers not currently drawn and remove obsolete markers on screen
         dynamicUpdateMarkers: function (markers, cache, keyfunction, isclusterbased) {
-            var markersCacheIncome = []; // points to be drawn, new points received
-            var markersCacheOnMap = [];  // current drawn points
-            var p;
-            var key;
+            var markersCacheIncome = [] // points to be drawn, new points received
+            , markersCacheOnMap = []  // current drawn points
+            , p
+            , key;
 
             // points to be displayed, diff of markersCacheIncome and markersCacheOnMap
             var markersDrawTodo = [];

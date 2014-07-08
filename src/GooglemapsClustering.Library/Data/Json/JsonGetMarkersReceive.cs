@@ -81,11 +81,16 @@ namespace GooglemapsClustering.Clustering.Data.Json
 		}
 
 		public override int GetHashCode()
+		{			
+			return string.Format("{0}_{1}_{2}", Viewport.GetHashCode(), Zoomlevel, FilterHashCode()).GetHashCode();
+		}
+
+		public int FilterHashCode()
 		{
-			var filterKey = "";
-			if (TypeFilterExclude.HasAny()) filterKey = TypeFilterExclude.Aggregate("", (a, b) => a + b + "_");
-			
-			return string.Format("{0}_{1}_{2}", Viewport.GetHashCode(), Zoomlevel, filterKey).GetHashCode();
+			var filterKey = string.Concat(IsClusteringEnabled,IsDebugLinesEnabled);
+			if (TypeFilterExclude.HasAny()) filterKey = TypeFilterExclude.Aggregate(filterKey, (a, b) => a + b + "_");
+
+			return filterKey.GetHashCode();
 		}
 	}
 }

@@ -48,6 +48,7 @@ namespace GooglemapsClustering.Clustering.Data.Config
 			ZoomlevelClusterStop = int.Parse(local[s = "ZoomlevelClusterStop"] ?? global[s] ?? Throw(s));
 			MaxPointsInCache = int.Parse(local[s = "MaxPointsInCache"] ?? global[s] ?? Throw(s));
 			Threads = int.Parse(local[s = "Threads"] ?? global[s] ?? Throw(s));
+			CacheServices = bool.Parse(local[s = "CacheServices"] ?? global[s] ?? Throw(s));
 
 			Environment = local[s = "Environment"] ?? global[s] ?? Throw(s);
 			
@@ -69,6 +70,8 @@ namespace GooglemapsClustering.Clustering.Data.Config
 		// Merge cluster points
 		public bool DoUpdateAllCentroidsToNearestContainingPoint { get; private set; } // move centroid point to nearest existing point?
 		public bool DoMergeGridIfCentroidsAreCloseToEachOther { get; private set; } // merge clusterpoints if close to each other?
+		public bool CacheServices { get; private set; } // cache get markers and get markers info services
+
 		public double MergeWithin { get; private set; } // if neighbor cluster is within 1/n dist then merge, heuristic, higher value gives less merging
 
 		// Cluster decision

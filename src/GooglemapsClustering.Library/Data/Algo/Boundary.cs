@@ -7,7 +7,7 @@ namespace GooglemapsClustering.Clustering.Data.Algo
     public class Boundary : Rectangle
     {        
         public Boundary() { }
-        public Boundary(Boundary b)
+        public Boundary(Rectangle b)
         {            
             this.Minx = b.Minx;
             this.Miny = b.Miny;
@@ -18,6 +18,7 @@ namespace GooglemapsClustering.Clustering.Data.Algo
 
         /// <summary>
         /// Normalize lat and lon values to their boundary values
+        /// O(1)
         /// </summary>
         public void Normalize()
         {
@@ -35,7 +36,7 @@ namespace GooglemapsClustering.Clustering.Data.Algo
                 || (Miny > LatLonInfo.MaxLatValue || Miny < LatLonInfo.MinLatValue)
                 || (Maxy > LatLonInfo.MaxLatValue || Maxy < LatLonInfo.MinLatValue)
                 )
-                throw new ApplicationException("input Boundary.ValidateLatLon() error " + this);
+                throw new Exception(string.Concat("input Boundary.ValidateLatLon() error ", this));
         }
 
         // Distance lon

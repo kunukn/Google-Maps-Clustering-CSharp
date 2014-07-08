@@ -53,9 +53,12 @@ namespace GooglemapsClustering.Clustering.Service
 				var filter = input.filter ?? "";
 
 				// values are validated there
-				var jsonReceive = new JsonGetMarkersReceive(nelat, nelon, swlat, swlon, zoomLevel, filter);
+				var inputValidated = new JsonGetMarkersReceive(nelat, nelon, swlat, swlon, zoomLevel, filter);
 
-				var cacheKey = CacheKeys.GetMarkers(jsonReceive.GetHashCode());
+				var grid = GridCluster.GetBoundaryExtended(inputValidated);
+				var cacheKeyHelper = string.Format("{0}_{1}_{2}", inputValidated.Zoomlevel, inputValidated.FilterHashCode(), grid.GetHashCode());
+				var cacheKey = CacheKeys.GetMarkers(cacheKeyHelper.GetHashCode());
+
 				var reply = _memCache.Get<JsonMarkersReply>(cacheKey);
 				if (reply != null)
 				{
@@ -64,9 +67,8 @@ namespace GooglemapsClustering.Clustering.Service
 					return reply; 
 				}
 
-
-				jsonReceive.Viewport.ValidateLatLon(); // Validate google map viewport input (should be always valid)
-				jsonReceive.Viewport.Normalize();
+				inputValidated.Viewport.ValidateLatLon(); // Validate google map viewport input (should be always valid)
+				inputValidated.Viewport.Normalize();
 
 				// Get all points from memory
 				ThreadData threadData = _pointsDatabase.GetThreadData();
@@ -76,20 +78,20 @@ namespace GooglemapsClustering.Clustering.Service
 				// Filter points
 				threadData = FilterUtil.Filter(
 					threadData,
-					new FilterData { TypeFilterExclude = jsonReceive.TypeFilterExclude }
+					new FilterData { TypeFilterExclude = inputValidated.TypeFilterExclude }
 					);
 
 				#endregion filter
 
 
 				// Create new instance for every ajax request with input all points and json data
-				ICluster clusterAlgo = new GridCluster(threadData, jsonReceive);
+				ICluster clusterAlgo = new GridCluster(threadData, inputValidated);
 
-				var clusteringEnabled = jsonReceive.IsClusteringEnabled
-					|| AlgoConfig.Get.AlwaysClusteringEnabledWhenZoomLevelLess > jsonReceive.Zoomlevel;
+				var clusteringEnabled = inputValidated.IsClusteringEnabled
+					|| AlgoConfig.Get.AlwaysClusteringEnabledWhenZoomLevelLess > inputValidated.Zoomlevel;
 
 				// Clustering
-				if (clusteringEnabled && jsonReceive.Zoomlevel < AlgoConfig.Get.ZoomlevelClusterStop)
+				if (clusteringEnabled && inputValidated.Zoomlevel < AlgoConfig.Get.ZoomlevelClusterStop)
 				{
 					#region cluster
 
@@ -107,7 +109,7 @@ namespace GooglemapsClustering.Clustering.Service
 				{
 					// If we are here then there are no clustering
 					// The number of items returned is restricted to avoid json data overflow
-					IList<P> filteredDataset = ClusterAlgorithmBase.FilterDataset(threadData.AllPoints, jsonReceive.Viewport);
+					IList<P> filteredDataset = ClusterAlgorithmBase.FilterDataset(threadData.AllPoints, inputValidated.Viewport);
 					IList<P> filteredDatasetMaxPoints = filteredDataset.Take(AlgoConfig.Get.MaxMarkersReturned).ToList();
 
 					reply = new JsonMarkersReply
@@ -117,11 +119,10 @@ namespace GooglemapsClustering.Clustering.Service
 						Mia = filteredDataset.Count - filteredDatasetMaxPoints.Count,
 					};
 				}
-
-				//// todo adjust cacheKey before using caching for this method, use grid-id convertion for NE and SW user input
-				//// if client ne and sw is inside a specific grid box then cache the grid box and the result
-				//// next time test if ne and sw is inside the grid box and return the cached result				
-				//_memCache.Add(reply, cacheKey, TimeSpan.FromMinutes(10)); // cache data
+				
+				// if client ne and sw is inside a specific grid box then cache the grid box and the result
+				// next time test if ne and sw is inside the grid box and return the cached result				
+				if(AlgoConfig.Get.CacheServices) _memCache.Add(reply, cacheKey, TimeSpan.FromMinutes(10)); // cache data
 
 				return reply;
 			}
@@ -176,7 +177,7 @@ namespace GooglemapsClustering.Clustering.Service
 				reply = new JsonMarkerInfoReply { Id = id };
 				reply.BuildContent(marker);
 
-				_memCache.Add(reply, cacheKey, TimeSpan.FromMinutes(10)); // cache data
+				if (AlgoConfig.Get.CacheServices) _memCache.Add(reply, cacheKey, TimeSpan.FromMinutes(10)); // cache data
 
 				return reply;
 			}

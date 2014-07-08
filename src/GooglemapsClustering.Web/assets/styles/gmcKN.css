@@ -57,8 +57,8 @@ body {
     background-color: #f00;
 }
 
-#gmcKN-zoomInfo, #gmcKN-markersCount, #gmcKN-response-time {
-    display: inline-block;
+#gmcKN-zoomInfo, #gmcKN-markersCount, #gmcKN-response-time, #gmcKN-cacheInfo {
+    display: block;
 }
 
 #gmcKN-zoomInfo {
@@ -73,8 +73,8 @@ body {
 
 #gmcKN-checkboxContainer {
     position: absolute;
-    width: 144px;
-    height: 270px;
+    min-width: 144px;
+    min-height: 280px;
     border: 1px #000 solid;
     background: #eee;
     left: 20px;
