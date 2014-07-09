@@ -15,8 +15,7 @@ namespace GooglemapsClustering.Clustering.Service
 
 		public  T Get<T>(string key) where T : class
 		{
-			try	{return _cache[key] as T;}
-			catch {return null;}
+			return _cache[key] as T;			
 		}
 
 		public  bool Add<T>(T objectToCache, string key, TimeSpan timespan)

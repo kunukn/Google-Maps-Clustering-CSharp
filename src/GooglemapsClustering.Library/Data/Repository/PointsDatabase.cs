@@ -14,42 +14,31 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 	/// </summary>
 	public class PointsDatabase : IPointsDatabase
 	{
-		
+
 		public readonly string FilePath;
 		public readonly TimeSpan LoadTime;
-		public readonly ThreadData ThreadData;
+		private readonly IMemCache _memCache;
+		private ThreadData ThreadData { get; set; }
 
 		private readonly object _lock = new object();
 
-		public IList<P> GetPoints()
-		{
-			return ThreadData.AllPoints;
-		}
-
-		public IList<P>[] GetThreadPoints()
-		{
-			return ThreadData.ThreadPoints;
-		}
-
 		public ThreadData GetThreadData()
 		{
-			return this.ThreadData;
-		}
-
-		public int Threads
-		{
-			get { return ThreadData.Threads; }
+			return ThreadData;
+			//return _memCache.Get<ThreadData>(CacheKeys.PointsDatabase);
 		}
 
 		public PointsDatabase(IMemCache memCache, string filepath, int threads)
-		{			
-			ThreadData = memCache.Get<ThreadData>(CacheKeys.PointsDatabase);
+		{
+			_memCache = memCache;
+
+			ThreadData = _memCache.Get<ThreadData>(CacheKeys.PointsDatabase);
 			if (ThreadData != null) return;	// cache hit
 
 			lock (_lock)
 			{
 				// if 2nd threads gets here then it should be cache hit
-				ThreadData = memCache.Get<ThreadData>(CacheKeys.PointsDatabase);
+				ThreadData = _memCache.Get<ThreadData>(CacheKeys.PointsDatabase);
 				if (ThreadData != null) return;
 
 				var sw = new Stopwatch();
@@ -68,7 +57,7 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 				if (points.Count > AlgoConfig.Get.MaxPointsInCache)
 				{
 					points = points.Take(AlgoConfig.Get.MaxPointsInCache).ToList();
-				}		
+				}
 
 				// Not important, can be deleted, only for ensuring visual randomness of marker display 
 				// when not all can be displayed on screen
@@ -89,16 +78,14 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 				var llist = new LinkedList<P>();
 				points.ForEach(p => llist.AddLast(p));
 
-				ThreadData.AllPoints = points.AsReadOnly();
-
 				if (ThreadData.Threads > 1)
 				{
 					// Thread related data
 					// Data are partitioned evenly to be used by the individual threads 
-					var delta = points.Count / Threads;
+					var delta = points.Count / ThreadData.Threads;
 
 					// Divide all the points evenly to the array of pointlist
-					for (int i = 0; i < Threads; i++)
+					for (int i = 0; i < ThreadData.Threads; i++)
 					{
 						ThreadData.ThreadPoints[i] = new List<P>();
 						for (int j = 0; j < delta; j++)
@@ -116,18 +103,26 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 						llist.RemoveFirst();
 						ThreadData.ThreadPoints.Last().Add(p);
 					}
-
-					// Readonly array
-					for (int i = 0; i < Threads; i++)
+					
+					for (int i = 0; i < ThreadData.Threads; i++)
 					{
 						if (ThreadData.ThreadPoints[i] is List<P>)
 						{
-							ThreadData.ThreadPoints[i] = (ThreadData.ThreadPoints[i] as List<P>).AsReadOnly();
+							// Readonly array
+							//ThreadData.ThreadPoints[i] = (ThreadData.ThreadPoints[i] as List<P>).AsReadOnly();
 						}
 					}
 				}
+				else
+				{
+					ThreadData.ThreadPoints[0] = points; //.AsReadOnly();
+				}
 
-				memCache.Add<ThreadData>(ThreadData, CacheKeys.PointsDatabase, TimeSpan.FromHours(24));
+				_memCache.Add<ThreadData>(ThreadData, CacheKeys.PointsDatabase, TimeSpan.FromHours(24));
+
+				var data = _memCache.Get<ThreadData>(CacheKeys.PointsDatabase);
+
+				if (data == null) throw new Exception("cache not working");
 
 				sw.Stop();
 				LoadTime = sw.Elapsed;

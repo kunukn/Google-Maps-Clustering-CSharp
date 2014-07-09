@@ -15,21 +15,14 @@ namespace GooglemapsClustering.Clustering.Algorithm
 	/// </summary>
 	public abstract class ClusterAlgorithmBase
 	{
-		protected ThreadData ThreadData;
-		protected readonly IList<P> Dataset; // all points
-		//id, bucket
-		public readonly Dictionary<string, Bucket> BucketsLookup =
-			new Dictionary<string, Bucket>();
-
-		protected ClusterAlgorithmBase() { }
+		protected readonly ThreadData ThreadData;
+		
+		// id, bucket
+		public readonly Dictionary<string, Bucket> BucketsLookup = new Dictionary<string, Bucket>();
+		
 		protected ClusterAlgorithmBase(ThreadData threadData)
-		{
-			if (threadData._(_ => _.AllPoints) == null)
-			{
-				throw new Exception("dataset is null");
-			}
-			this.ThreadData = threadData;
-			this.Dataset = threadData.AllPoints;
+		{			
+			this.ThreadData = threadData;			
 		}
 
 		public List<P> GetClusterResult(Boundary grid)
@@ -37,7 +30,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
 			// Collect used buckets and return the result
 			var clusterPoints = new List<P>();
 
-			//O(m*n)
+			// O(m*n)
 			foreach (var item in BucketsLookup)
 			{
 				var bucket = item.Value;
@@ -54,16 +47,11 @@ namespace GooglemapsClustering.Clustering.Algorithm
 				}
 			}
 
-			//var filtered = FilterDataset(clusterPoints, grid); // post filter data for client viewport
-			//return filtered; //not working properly when zoomed far out.
+			// var filtered = FilterDataset(clusterPoints, grid); // post filter data for client viewport
+			// return filtered; //not working properly when zoomed far out.
 			return clusterPoints;  // return not post filtered
 		}
-
-		// O(n), could be O(logn-ish) using range search or similar, no problem when points are <500.000
-		public static IList<P> FilterDataset(IList<P> dataset, Boundary viewport)
-		{
-			return dataset.Where(i => MathTool.IsInside(viewport, i)).ToList();
-		}
+		
 
 		// Circular mean, very relevant for points around New Zealand, where lon -180 to 180 overlap
 		// Adapted Centroid Calculation of N Points for Google Maps usage
@@ -153,7 +141,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
 				bucket.Points.Clear();
 			}
 
-			foreach (var p in Dataset)
+			foreach (var p in this.ThreadData.AllPoints)
 			{
 				var minDist = Double.MaxValue;
 				var index = string.Empty;

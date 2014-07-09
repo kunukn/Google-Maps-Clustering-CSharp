@@ -16,14 +16,12 @@ namespace GooglemapsClustering.Clustering.Service
 	public class MapService : IMapService
 	{
 		private readonly IPointsDatabase _pointsDatabase;
-		private readonly IMemCache _memCache;
-		private readonly int _threads;
+		private readonly IMemCache _memCache;		
 
 		public MapService(IPointsDatabase pointsDatabase, IMemCache memCache)
 		{
 			_pointsDatabase = pointsDatabase;
-			_memCache = memCache;
-			_threads = _pointsDatabase.Threads;
+			_memCache = memCache;			
 		}
 
 		public JsonMarkersReply GetMarkers(JsonGetMarkersInput input)
@@ -76,7 +74,7 @@ namespace GooglemapsClustering.Clustering.Service
 				#region fiter
 
 				// Filter points
-				threadData = FilterUtil.Filter(
+				threadData = FilterUtil.FilterByType(
 					threadData,
 					new FilterData { TypeFilterExclude = inputValidated.TypeFilterExclude }
 					);
@@ -109,7 +107,7 @@ namespace GooglemapsClustering.Clustering.Service
 				{
 					// If we are here then there are no clustering
 					// The number of items returned is restricted to avoid json data overflow
-					IList<P> filteredDataset = ClusterAlgorithmBase.FilterDataset(threadData.AllPoints, inputValidated.Viewport);
+					IList<P> filteredDataset = FilterUtil.FilterDataByViewport(threadData, inputValidated.Viewport).AllPoints;
 					IList<P> filteredDatasetMaxPoints = filteredDataset.Take(AlgoConfig.Get.MaxMarkersReturned).ToList();
 
 					reply = new JsonMarkersReply
@@ -172,7 +170,7 @@ namespace GooglemapsClustering.Clustering.Service
 					return reply;
 				}
 
-				P marker = _pointsDatabase.GetPoints().SingleOrDefault(i => i.I == uid);
+				P marker = _pointsDatabase.GetThreadData().AllPoints.SingleOrDefault(i => i.I == uid);
 
 				reply = new JsonMarkerInfoReply { Id = id };
 				reply.BuildContent(marker);
@@ -206,8 +204,8 @@ namespace GooglemapsClustering.Clustering.Service
 		{
 			return new JsonInfoReply
 			{
-				DbSize = _pointsDatabase.GetPoints().Count,
-				FirstPoint = _pointsDatabase.GetPoints().FirstOrDefault()
+				DbSize = _pointsDatabase.GetThreadData().AllPoints.Count,
+				FirstPoint = _pointsDatabase.GetThreadData().AllPoints.FirstOrDefault()
 			};
 
 		}

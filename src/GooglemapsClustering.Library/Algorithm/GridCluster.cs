@@ -288,10 +288,10 @@ then the longitudes from 170 to -170 will be clustered together
 
 		public IList<P> RunCluster()
 		{
-			// Skip points outside the grid
+			// Skip points outside the grid, not visible to user then skip those
 			IList<P> filtered = ClusterInfo.DoFilterData(this._jsonReceive.Zoomlevel)
-				? FilterDataset(Dataset, Grid)
-				: Dataset;
+				? FilterUtil.FilterDataByViewport(this.ThreadData, Grid).AllPoints
+				: this.ThreadData.AllPoints;
 
 			// Put points in buckets
 			foreach (var p in filtered)
