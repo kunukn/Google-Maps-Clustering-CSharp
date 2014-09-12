@@ -120,7 +120,7 @@ namespace GooglemapsClustering.Clustering.Service
 				
 				// if client ne and sw is inside a specific grid box then cache the grid box and the result
 				// next time test if ne and sw is inside the grid box and return the cached result				
-				if(AlgoConfig.Get.CacheServices) _memCache.Add(reply, cacheKey, TimeSpan.FromMinutes(10)); // cache data
+				if(AlgoConfig.Get.CacheServices) _memCache.Set(reply, cacheKey, TimeSpan.FromMinutes(10)); // cache data
 
 				return reply;
 			}
@@ -175,7 +175,7 @@ namespace GooglemapsClustering.Clustering.Service
 				reply = new JsonMarkerInfoReply { Id = id };
 				reply.BuildContent(marker);
 
-				if (AlgoConfig.Get.CacheServices) _memCache.Add(reply, cacheKey, TimeSpan.FromMinutes(10)); // cache data
+				if (AlgoConfig.Get.CacheServices) _memCache.Set(reply, cacheKey, TimeSpan.FromMinutes(10)); // cache data
 
 				return reply;
 			}
@@ -219,7 +219,7 @@ namespace GooglemapsClustering.Clustering.Service
 			if (data == null)
 			{
 				data = fn.Invoke();
-				if (data != null) _memCache.Add(data, key, cacheSpan);
+				if (data != null) _memCache.Set(data, key, cacheSpan);
 			}
 			return data;
 		}

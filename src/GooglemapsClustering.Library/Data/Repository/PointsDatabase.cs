@@ -118,7 +118,7 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 					ThreadData.ThreadPoints[0] = points; //.AsReadOnly();
 				}
 
-				_memCache.Add<ThreadData>(ThreadData, CacheKeys.PointsDatabase, TimeSpan.FromHours(24));
+				_memCache.Set<ThreadData>(ThreadData, CacheKeys.PointsDatabase, TimeSpan.FromHours(24));
 
 				var data = _memCache.Get<ThreadData>(CacheKeys.PointsDatabase);
 

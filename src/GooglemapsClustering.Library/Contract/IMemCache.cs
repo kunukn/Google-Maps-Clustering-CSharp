@@ -6,7 +6,8 @@ namespace GooglemapsClustering.Clustering.Contract
 	{
 		T Get<T>(string key) where T : class;
 		bool Add<T>(T objectToCache, string key, TimeSpan timespan);
-		object Clear(string key);
+	    void Set<T>(T objectToCache, string key, TimeSpan timespan);
+		object Remove(string key);
 		bool Exists(string key);		
 	}
 }
