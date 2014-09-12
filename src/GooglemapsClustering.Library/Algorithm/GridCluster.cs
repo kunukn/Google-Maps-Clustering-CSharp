@@ -26,8 +26,8 @@ namespace GooglemapsClustering.Clustering.Algorithm
 		protected readonly double DeltaY;
 
 		public static Boundary GetBoundaryExtended(JsonGetMarkersReceive input)
-		{
-			var deltas = GetDelta(input.Zoomlevel);
+		{            
+            var deltas = GetDelta(AlgoConfig.Get.Gridx, AlgoConfig.Get.Gridy, input.Zoomlevel);
 			var deltaX = deltas[0];
 			var deltaY = deltas[1];
 
@@ -51,7 +51,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
 		/// O(1)
 		/// </summary>
 		/// <returns></returns>
-		public static double[] GetDelta(int zoomlevel)
+		public static double[] GetDelta(int gridx, int gridy, int zoomlevel)
 		{
 			// Heuristic specific values and grid size dependent.
 			// used in combination with zoom level.
@@ -63,12 +63,9 @@ namespace GooglemapsClustering.Clustering.Algorithm
 			// Absolute base value of latitude distance, heuristic value
 			const int yZoomLevel1 = 240;
 
-			// Relative values, used for adjusting grid size
-			var gridScaleX = AlgoConfig.Get.Gridx;
-			var gridScaleY = AlgoConfig.Get.Gridy;
-
-			var x = MathTool.Half(xZoomLevel1, zoomlevel - 1) / gridScaleX;
-			var y = MathTool.Half(yZoomLevel1, zoomlevel - 1) / gridScaleY;
+			// Relative values, used for adjusting grid size			
+			var x = MathTool.Half(xZoomLevel1, zoomlevel - 1) / gridx;
+			var y = MathTool.Half(yZoomLevel1, zoomlevel - 1) / gridy;
 			return new double[] { x, y };
 		}
 
@@ -83,7 +80,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
 			: base(threadData)
 		{
 			this._jsonReceive = input;
-			double[] deltas = GetDelta(input.Zoomlevel);
+            double[] deltas = GetDelta(AlgoConfig.Get.Gridx, AlgoConfig.Get.Gridy, input.Zoomlevel);
 			DeltaX = deltas[0];
 			DeltaY = deltas[1];
 			Grid = GetBoundaryExtended(input);
