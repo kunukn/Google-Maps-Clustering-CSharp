@@ -36,7 +36,8 @@ namespace GooglemapsClustering.Web
 
 			// Important it is singleton, loading the points from file can be slow and expensive
 			builder.RegisterType<PointsDatabase>().As<IPointsDatabase>()
-				 .WithParameter("filepath", filePathToPoints)				 
+				 .WithParameter("filepath", filePathToPoints)
+				 .WithParameter("threads", GmcSettings.Get.Threads)
 				.SingleInstance();
 
 			builder.RegisterType<MapService>().As<IMapService>().SingleInstance(); // only getters, thus singleton

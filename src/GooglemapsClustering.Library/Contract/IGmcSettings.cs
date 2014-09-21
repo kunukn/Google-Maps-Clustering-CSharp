@@ -19,5 +19,6 @@ namespace GooglemapsClustering.Clustering.Contract
 		int MaxPointsInCache { get; }
 		string Environment { get; }
         bool CacheServices { get; }
+        int Threads { get; }
 	}
 }

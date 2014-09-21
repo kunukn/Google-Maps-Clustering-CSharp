@@ -69,13 +69,13 @@ namespace GooglemapsClustering.Clustering.Service
 				inputValidated.Viewport.Normalize();
 
 				// Get all points from memory
-			    IList<P> points = _pointsDatabase.GetPoints();
+				ThreadData threadData = _pointsDatabase.GetThreadData();
 
 				#region fiter
 
 				// Filter points
-				points = FilterUtil.FilterByType(
-					points,
+				threadData = FilterUtil.FilterByType(
+					threadData,
 					new FilterData { TypeFilterExclude = inputValidated.TypeFilterExclude }
 					);
 
@@ -83,7 +83,7 @@ namespace GooglemapsClustering.Clustering.Service
 
 
 				// Create new instance for every ajax request with input all points and json data
-				ICluster clusterAlgo = new GridCluster(points, inputValidated);
+				ICluster clusterAlgo = new GridCluster(threadData, inputValidated);
 
 				var clusteringEnabled = inputValidated.IsClusteringEnabled
 					|| GmcSettings.Get.AlwaysClusteringEnabledWhenZoomLevelLess > inputValidated.Zoomlevel;
@@ -107,7 +107,7 @@ namespace GooglemapsClustering.Clustering.Service
 				{
 					// If we are here then there are no clustering
 					// The number of items returned is restricted to avoid json data overflow
-					IList<P> filteredDataset = FilterUtil.FilterDataByViewport(points, inputValidated.Viewport);
+					IList<P> filteredDataset = FilterUtil.FilterDataByViewport(threadData, inputValidated.Viewport).AllPoints;
 					IList<P> filteredDatasetMaxPoints = filteredDataset.Take(GmcSettings.Get.MaxMarkersReturned).ToList();
 
 					reply = new JsonMarkersReply
@@ -170,7 +170,7 @@ namespace GooglemapsClustering.Clustering.Service
 					return reply;
 				}
 
-				P marker = _pointsDatabase.GetPoints().SingleOrDefault(i => i.I == uid);
+				P marker = _pointsDatabase.GetThreadData().AllPoints.SingleOrDefault(i => i.I == uid);
 
 				reply = new JsonMarkerInfoReply { Id = id };
 				reply.BuildContent(marker);
@@ -204,8 +204,8 @@ namespace GooglemapsClustering.Clustering.Service
 		{
 			return new JsonInfoReply
 			{
-				DbSize = _pointsDatabase.GetPoints().Count,
-				FirstPoint = _pointsDatabase.GetPoints().FirstOrDefault()
+				DbSize = _pointsDatabase.GetThreadData().AllPoints.Count,
+				FirstPoint = _pointsDatabase.GetThreadData().AllPoints.FirstOrDefault()
 			};
 
 		}

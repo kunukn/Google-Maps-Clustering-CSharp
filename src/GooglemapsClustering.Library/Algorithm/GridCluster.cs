@@ -74,10 +74,10 @@ namespace GooglemapsClustering.Clustering.Algorithm
 		/// <summary>
 		/// todo use threads and threadData
 		/// </summary>
-		/// <param name="points"></param>
+		/// <param name="threadData"></param>
 		/// <param name="input"></param>
-		public GridCluster(IList<P> points, JsonGetMarkersReceive input)
-			: base(points)
+		public GridCluster(ThreadData threadData, JsonGetMarkersReceive input)
+			: base(threadData)
 		{
 			this._jsonReceive = input;
             double[] deltas = GetDelta(GmcSettings.Get.Gridx, GmcSettings.Get.Gridy, input.Zoomlevel);
@@ -287,8 +287,8 @@ then the longitudes from 170 to -170 will be clustered together
 		{
 			// Skip points outside the grid, not visible to user then skip those
 			IList<P> filtered = ClusterInfo.DoFilterData(this._jsonReceive.Zoomlevel)
-				? FilterUtil.FilterDataByViewport(this.points, Grid)
-				: this.points;
+				? FilterUtil.FilterDataByViewport(this.ThreadData, Grid).AllPoints
+				: this.ThreadData.AllPoints;
 
 			// Put points in buckets
 			foreach (var p in filtered)

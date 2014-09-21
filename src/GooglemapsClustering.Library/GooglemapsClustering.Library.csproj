@@ -47,10 +47,10 @@
   <ItemGroup>
     <Compile Include="Algorithm\ClusterAlgorithmBase.cs" />
     <Compile Include="Algorithm\GridCluster.cs" />
+    <Compile Include="Contract\IGmcSettings.cs" />
     <Compile Include="Contract\IMemCache.cs" />
     <Compile Include="Contract\IP.cs" />
     <Compile Include="Contract\ICluster.cs" />
-    <Compile Include="Contract\IGmcSettings.cs" />
     <Compile Include="Contract\IPointsDatabase.cs" />
     <Compile Include="Contract\IMapService.cs" />
     <Compile Include="Data\CacheKeys.cs" />
@@ -73,6 +73,7 @@
     <Compile Include="Data\Geometry\P.cs" />
     <Compile Include="Data\Geometry\PBase.cs" />
     <Compile Include="Data\Geometry\Rectangle.cs" />
+    <Compile Include="Data\ThreadData.cs" />
     <Compile Include="Extensions\MonadExtension.cs" />
     <Compile Include="Extensions\IEnumerableExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

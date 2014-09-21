@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GooglemapsClustering.Clustering.Data;
 using GooglemapsClustering.Clustering.Data.Algo;
 using GooglemapsClustering.Clustering.Data.Config;
 using GooglemapsClustering.Clustering.Data.Geometry;
@@ -14,14 +15,14 @@ namespace GooglemapsClustering.Clustering.Algorithm
 	/// </summary>
 	public abstract class ClusterAlgorithmBase
 	{
-		protected readonly IList<P> points;
+		protected readonly ThreadData ThreadData;
 		
 		// id, bucket
 		public readonly Dictionary<string, Bucket> BucketsLookup = new Dictionary<string, Bucket>();
-
-        protected ClusterAlgorithmBase(IList<P> points)
+		
+		protected ClusterAlgorithmBase(ThreadData threadData)
 		{			
-			this.points = points;			
+			this.ThreadData = threadData;			
 		}
 
 		public List<P> GetClusterResult(Boundary grid)
@@ -140,7 +141,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
 				bucket.Points.Clear();
 			}
 
-			foreach (var p in this.points)
+			foreach (var p in this.ThreadData.AllPoints)
 			{
 				var minDist = Double.MaxValue;
 				var index = string.Empty;

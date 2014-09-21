@@ -16,12 +16,12 @@ namespace GooglemapsClustering.Clustering.Data.Config
 		const string SectionLocal = "kunukn.GmcSettings/Local";
 		const string SectionGlobal = "kunukn.GmcSettings/Global";
 
-		private static IGmcSettings _algoConfig;
+		private static GmcSettings _algoConfig;
 
 		/// <summary>
 		/// Singleton
 		/// </summary>
-		public static IGmcSettings Get
+		public static GmcSettings Get
 		{
 			get
 			{
@@ -47,6 +47,7 @@ namespace GooglemapsClustering.Clustering.Data.Config
 			AlwaysClusteringEnabledWhenZoomLevelLess = int.Parse(local[s = "AlwaysClusteringEnabledWhenZoomLevelLess"] ?? global[s] ?? Throw(s));
 			ZoomlevelClusterStop = int.Parse(local[s = "ZoomlevelClusterStop"] ?? global[s] ?? Throw(s));
 			MaxPointsInCache = int.Parse(local[s = "MaxPointsInCache"] ?? global[s] ?? Throw(s));
+			Threads = int.Parse(local[s = "Threads"] ?? global[s] ?? Throw(s));
 			CacheServices = bool.Parse(local[s = "CacheServices"] ?? global[s] ?? Throw(s));
 
 			Environment = local[s = "Environment"] ?? global[s] ?? Throw(s);
@@ -99,6 +100,9 @@ namespace GooglemapsClustering.Clustering.Data.Config
 		// 
 		public string Environment { get; private set; }
 
+		// Number of concurrent threads running for faster clustering
+		public int Threads { get; private set; }
+
 		// 
 		public NameValueCollection GetSectionLocal()
 		{
@@ -114,13 +118,13 @@ namespace GooglemapsClustering.Clustering.Data.Config
 			throw new Exception(string.Format("GmcGlobalKeySettings setup error: {0}", s));
 		}
 
-        //public class EnvironmentOption
-        //{
-        //    public const string Local = "local";
-        //    public const string Development = "dev";
-        //    public const string Test = "test";
-        //    public const string Prod = "prod";
-        //}
+		public class EnvironmentOption
+		{
+			public const string Local = "local";
+			public const string Development = "dev";
+			public const string Test = "test";
+			public const string Prod = "prod";
+		}
 
 	}
 }
