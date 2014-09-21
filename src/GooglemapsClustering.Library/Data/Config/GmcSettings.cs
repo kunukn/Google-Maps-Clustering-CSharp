@@ -11,25 +11,25 @@ namespace GooglemapsClustering.Clustering.Data.Config
 	/// Readonly fields
 	/// Data are parsed from a config file
 	/// </summary>
-	public class AlgoConfig : IAlgoConfig
+	public class GmcSettings : IGmcSettings
 	{
 		const string SectionLocal = "kunukn.GmcSettings/Local";
 		const string SectionGlobal = "kunukn.GmcSettings/Global";
 
-		private static AlgoConfig _algoConfig;
+		private static IGmcSettings _algoConfig;
 
 		/// <summary>
 		/// Singleton
 		/// </summary>
-		public static AlgoConfig Get
+		public static IGmcSettings Get
 		{
 			get
 			{
-				return _algoConfig ?? (_algoConfig = new AlgoConfig());
+				return _algoConfig ?? (_algoConfig = new GmcSettings());
 			}
 		}
 
-		private AlgoConfig()
+		private GmcSettings()
 		{
 			var local = GetSectionLocal();
 			var global = GetSectionGlobal();
@@ -47,7 +47,6 @@ namespace GooglemapsClustering.Clustering.Data.Config
 			AlwaysClusteringEnabledWhenZoomLevelLess = int.Parse(local[s = "AlwaysClusteringEnabledWhenZoomLevelLess"] ?? global[s] ?? Throw(s));
 			ZoomlevelClusterStop = int.Parse(local[s = "ZoomlevelClusterStop"] ?? global[s] ?? Throw(s));
 			MaxPointsInCache = int.Parse(local[s = "MaxPointsInCache"] ?? global[s] ?? Throw(s));
-			Threads = int.Parse(local[s = "Threads"] ?? global[s] ?? Throw(s));
 			CacheServices = bool.Parse(local[s = "CacheServices"] ?? global[s] ?? Throw(s));
 
 			Environment = local[s = "Environment"] ?? global[s] ?? Throw(s);
@@ -100,9 +99,6 @@ namespace GooglemapsClustering.Clustering.Data.Config
 		// 
 		public string Environment { get; private set; }
 
-		// Number of concurrent threads running for faster clustering
-		public int Threads { get; private set; }
-
 		// 
 		public NameValueCollection GetSectionLocal()
 		{
@@ -118,13 +114,13 @@ namespace GooglemapsClustering.Clustering.Data.Config
 			throw new Exception(string.Format("GmcGlobalKeySettings setup error: {0}", s));
 		}
 
-		public class EnvironmentOption
-		{
-			public const string Local = "local";
-			public const string Development = "dev";
-			public const string Test = "test";
-			public const string Prod = "prod";
-		}
+        //public class EnvironmentOption
+        //{
+        //    public const string Local = "local";
+        //    public const string Development = "dev";
+        //    public const string Test = "test";
+        //    public const string Prod = "prod";
+        //}
 
 	}
 }

@@ -1,6 +1,8 @@
-﻿using Autofac;
+﻿using System.Collections.Generic;
+using Autofac;
 using GooglemapsClustering.Clustering.Contract;
 using GooglemapsClustering.Clustering.Data;
+using GooglemapsClustering.Clustering.Data.Geometry;
 using GooglemapsClustering.Web;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rhino.Mocks;
@@ -42,7 +44,7 @@ namespace GooglemapsClustering.Test
             // Assert
             Assert.IsNotNull(memoryDatabase);
             Assert.IsNotNull(mapService);
-            Assert.IsTrue(memoryDatabase.GetThreadData().AllPoints.Any());
+            Assert.IsTrue(memoryDatabase.GetPoints().Any());
         }
 
         [TestMethod]
@@ -68,11 +70,11 @@ namespace GooglemapsClustering.Test
             // Arrange
             var pointsDatabase = MockRepository.GenerateStub<IPointsDatabase>();
             pointsDatabase
-                .Stub(s => s.GetThreadData())
-                .Return(new ThreadData(10));
+                .Stub(s => s.GetPoints())
+                .Return(new List<P>{new P{Name = "test"}});
 
             // Act
-            var data = pointsDatabase.GetThreadData();
+            var data = pointsDatabase.GetPoints();
 
             // Assert
             Assert.IsNotNull(data);

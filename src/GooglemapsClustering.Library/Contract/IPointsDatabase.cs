@@ -1,9 +1,10 @@
-﻿using GooglemapsClustering.Clustering.Data;
+﻿using System.Collections.Generic;
+using GooglemapsClustering.Clustering.Data.Geometry;
 
 namespace GooglemapsClustering.Clustering.Contract
 {
 	public interface IPointsDatabase
 	{		
-		ThreadData GetThreadData();			
+		IList<P> GetPoints();			
 	}
 }

@@ -27,15 +27,15 @@ namespace GooglemapsClustering.Clustering.Algorithm
 
 		public static Boundary GetBoundaryExtended(JsonGetMarkersReceive input)
 		{            
-            var deltas = GetDelta(AlgoConfig.Get.Gridx, AlgoConfig.Get.Gridy, input.Zoomlevel);
+            var deltas = GetDelta(GmcSettings.Get.Gridx, GmcSettings.Get.Gridy, input.Zoomlevel);
 			var deltaX = deltas[0];
 			var deltaY = deltas[1];
 
 			// Grid with extended outer grid-area non-visible            
-			var a = MathTool.FloorLatLon(input.Viewport.Minx, deltaX) - deltaX * AlgoConfig.Get.OuterGridExtend;
-			var b = MathTool.FloorLatLon(input.Viewport.Miny, deltaY) - deltaY * AlgoConfig.Get.OuterGridExtend;
-			var a2 = MathTool.FloorLatLon(input.Viewport.Maxx, deltaX) + deltaX * (1 + AlgoConfig.Get.OuterGridExtend);
-			var b2 = MathTool.FloorLatLon(input.Viewport.Maxy, deltaY) + deltaY * (1 + AlgoConfig.Get.OuterGridExtend);
+			var a = MathTool.FloorLatLon(input.Viewport.Minx, deltaX) - deltaX * GmcSettings.Get.OuterGridExtend;
+			var b = MathTool.FloorLatLon(input.Viewport.Miny, deltaY) - deltaY * GmcSettings.Get.OuterGridExtend;
+			var a2 = MathTool.FloorLatLon(input.Viewport.Maxx, deltaX) + deltaX * (1 + GmcSettings.Get.OuterGridExtend);
+			var b2 = MathTool.FloorLatLon(input.Viewport.Maxy, deltaY) + deltaY * (1 + GmcSettings.Get.OuterGridExtend);
 
 			// Latitude is special with Google Maps, they don't wrap around, then do constrain
 			b = MathTool.ConstrainLatitude(b);
@@ -74,13 +74,13 @@ namespace GooglemapsClustering.Clustering.Algorithm
 		/// <summary>
 		/// todo use threads and threadData
 		/// </summary>
-		/// <param name="threadData"></param>
+		/// <param name="points"></param>
 		/// <param name="input"></param>
-		public GridCluster(ThreadData threadData, JsonGetMarkersReceive input)
-			: base(threadData)
+		public GridCluster(IList<P> points, JsonGetMarkersReceive input)
+			: base(points)
 		{
 			this._jsonReceive = input;
-            double[] deltas = GetDelta(AlgoConfig.Get.Gridx, AlgoConfig.Get.Gridy, input.Zoomlevel);
+            double[] deltas = GetDelta(GmcSettings.Get.Gridx, GmcSettings.Get.Gridy, input.Zoomlevel);
 			DeltaX = deltas[0];
 			DeltaY = deltas[1];
 			Grid = GetBoundaryExtended(input);
@@ -93,7 +93,7 @@ namespace GooglemapsClustering.Clustering.Algorithm
 		/// <returns></returns>
 		public IList<Line> GetPolyLines()
 		{
-			if (!AlgoConfig.Get.DoShowGridLinesInGoogleMap) return null; // server disabled it
+			if (!GmcSettings.Get.DoShowGridLinesInGoogleMap) return null; // server disabled it
 			if (!_jsonReceive.IsDebugLinesEnabled) return null; // client disabled it
 
 			// Make the red lines data to be drawn in Google map
@@ -199,8 +199,8 @@ namespace GooglemapsClustering.Clustering.Algorithm
 		}
 		void MergeClustersGridHelper(string currentKey, IEnumerable<string> neighborKeys)
 		{
-			double minDistX = DeltaX / AlgoConfig.Get.MergeWithin;
-			double minDistY = DeltaY / AlgoConfig.Get.MergeWithin;
+			double minDistX = DeltaX / GmcSettings.Get.MergeWithin;
+			double minDistY = DeltaY / GmcSettings.Get.MergeWithin;
 			// If clusters in grid are too close to each other, merge them
 			double withinDist = Math.Max(minDistX, minDistY);
 
@@ -287,8 +287,8 @@ then the longitudes from 170 to -170 will be clustered together
 		{
 			// Skip points outside the grid, not visible to user then skip those
 			IList<P> filtered = ClusterInfo.DoFilterData(this._jsonReceive.Zoomlevel)
-				? FilterUtil.FilterDataByViewport(this.ThreadData, Grid).AllPoints
-				: this.ThreadData.AllPoints;
+				? FilterUtil.FilterDataByViewport(this.points, Grid)
+				: this.points;
 
 			// Put points in buckets
 			foreach (var p in filtered)
@@ -318,14 +318,14 @@ then the longitudes from 170 to -170 will be clustered together
 			SetCentroidForAllBuckets(BucketsLookup.Values);
 
 			// Merge if gridpoint is to close
-			if (AlgoConfig.Get.DoMergeGridIfCentroidsAreCloseToEachOther) MergeClustersGrid();
+			if (GmcSettings.Get.DoMergeGridIfCentroidsAreCloseToEachOther) MergeClustersGrid();
 
-			if (AlgoConfig.Get.DoUpdateAllCentroidsToNearestContainingPoint) UpdateAllCentroidsToNearestContainingPoint();
+			if (GmcSettings.Get.DoUpdateAllCentroidsToNearestContainingPoint) UpdateAllCentroidsToNearestContainingPoint();
 
 			// Check again
 			// Merge if gridpoint is to close
-			if (AlgoConfig.Get.DoMergeGridIfCentroidsAreCloseToEachOther
-				&& AlgoConfig.Get.DoUpdateAllCentroidsToNearestContainingPoint)
+			if (GmcSettings.Get.DoMergeGridIfCentroidsAreCloseToEachOther
+				&& GmcSettings.Get.DoUpdateAllCentroidsToNearestContainingPoint)
 			{
 				MergeClustersGrid();
 				// And again set centroid to closest point in bucket 

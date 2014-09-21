@@ -2,7 +2,7 @@
 
 namespace GooglemapsClustering.Clustering.Contract
 {
-	public interface IAlgoConfig
+	public interface IGmcSettings
 	{
 		bool DoShowGridLinesInGoogleMap { get; }
 		int OuterGridExtend { get; }
@@ -18,6 +18,6 @@ namespace GooglemapsClustering.Clustering.Contract
 		HashSet<int> MarkerTypes { get; }
 		int MaxPointsInCache { get; }
 		string Environment { get; }
-		int Threads { get; }
+        bool CacheServices { get; }
 	}
 }
