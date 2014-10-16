@@ -22,8 +22,8 @@ namespace GooglemapsClustering.Web
 			var builder = new ContainerBuilder();
 			OnConfigure(builder, filePathToPoints);
 
-			if (this.Container == null) this.Container = builder.Build();
-			else builder.Update(this.Container);
+			if (Container == null) Container = builder.Build();
+			else builder.Update(Container);
 
 			DependencyResolver.SetResolver(new AutofacDependencyResolver(this.Container));
 		}

@@ -32,8 +32,6 @@ namespace GooglemapsClustering.Web.Controllers
             }
         }
 
-
-
         protected static string GetJsonMin(object o)
         {
             return JsonConvert.SerializeObject(o, Newtonsoft.Json.Formatting.None, new JsonSerializerSettings
