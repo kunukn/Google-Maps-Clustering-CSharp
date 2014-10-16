@@ -3,7 +3,6 @@ using System.Web.Mvc;
 using Autofac;
 using Autofac.Integration.Mvc;
 using GooglemapsClustering.Clustering.Contract;
-using GooglemapsClustering.Clustering.Data.Config;
 using GooglemapsClustering.Clustering.Data.Repository;
 using GooglemapsClustering.Clustering.Service;
 

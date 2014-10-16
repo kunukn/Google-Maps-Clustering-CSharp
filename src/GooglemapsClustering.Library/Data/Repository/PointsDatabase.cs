@@ -17,15 +17,14 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 
 		public readonly string FilePath;
 		public readonly TimeSpan LoadTime;
-        protected readonly IMemCache _memCache;
+		protected readonly IMemCache _memCache;
 		protected IList<P> Points { get; set; }
 
-        protected readonly object _lock = new object();
+		protected readonly object _threadsafe = new object();
 
 		public IList<P> GetPoints()
 		{
 			return Points;
-			//return _memCache.Get<ThreadData>(CacheKeys.PointsDatabase);
 		}
 
 		public PointsDatabase(IMemCache memCache, string filepath)
@@ -35,10 +34,9 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 			Points = _memCache.Get<IList<P>>(CacheKeys.PointsDatabase);
 			if (Points != null) return;	// cache hit
 
-			lock (_lock)
+			lock (_threadsafe)
 			{
-				// if 2nd threads gets here then it should be cache hit
-                Points = _memCache.Get<IList<P>>(CacheKeys.PointsDatabase);
+				Points = _memCache.Get<IList<P>>(CacheKeys.PointsDatabase);
 				if (Points != null) return;
 
 				var sw = new Stopwatch();
@@ -75,18 +73,19 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 					points[r] = temp;
 				}
 
-				var llist = new LinkedList<P>();
-				points.ForEach(p => llist.AddLast(p));
-							
-				{
-					Points = points;
-				}
+				var linkedList = new LinkedList<P>();
+				points.ForEach(p => linkedList.AddLast(p));
+
+				Points = points;
 
 				_memCache.Set<IList<P>>(Points, CacheKeys.PointsDatabase, TimeSpan.FromHours(24));
 
-                var data = _memCache.Get<IList<P>>(CacheKeys.PointsDatabase);
+				var data = _memCache.Get<IList<P>>(CacheKeys.PointsDatabase);
 
-				if (data == null) throw new Exception("cache not working");
+				if (data == null)
+				{
+					throw new Exception("cache not working");
+				}
 
 				sw.Stop();
 				LoadTime = sw.Elapsed;

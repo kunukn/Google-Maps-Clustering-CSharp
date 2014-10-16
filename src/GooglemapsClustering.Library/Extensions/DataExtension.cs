@@ -248,7 +248,10 @@ namespace GooglemapsClustering.Clustering.Extensions
 
             var arr = s.Split(new [] {";"}, StringSplitOptions.RemoveEmptyEntries);
             var ints = new int[arr.Length];
-            for (var i = 0; i < arr.Length; i++) ints[i] = int.Parse(arr[i]);
+	        for (var i = 0; i < arr.Length; i++)
+	        {
+		        ints[i] = int.Parse(arr[i]);
+	        }
 
             return ints;
         }
