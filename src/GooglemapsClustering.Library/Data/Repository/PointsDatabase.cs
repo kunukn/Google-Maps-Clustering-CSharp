@@ -17,15 +17,18 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 
 		public readonly string FilePath;
 		public readonly TimeSpan LoadTime;
-		private readonly IMemCache _memCache;
+
 		private ThreadData ThreadData { get; set; }
 
-		private readonly object _lock = new object();
+		private readonly IMemCache _memCache;
+
+		protected IList<P> Points { get; set; }
+
+		protected readonly object _threadsafe = new object();
 
 		public ThreadData GetThreadData()
 		{
 			return ThreadData;
-			//return _memCache.Get<ThreadData>(CacheKeys.PointsDatabase);
 		}
 
 		public PointsDatabase(IMemCache memCache, string filepath, int threads)
@@ -35,11 +38,14 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 			ThreadData = _memCache.Get<ThreadData>(CacheKeys.PointsDatabase);
 			if (ThreadData != null) return;	// cache hit
 
-			lock (_lock)
+			lock (_threadsafe)
 			{
 				// if 2nd threads gets here then it should be cache hit
 				ThreadData = _memCache.Get<ThreadData>(CacheKeys.PointsDatabase);
 				if (ThreadData != null) return;
+			
+				Points = _memCache.Get<IList<P>>(CacheKeys.PointsDatabase);
+				if (Points != null) return;
 
 				var sw = new Stopwatch();
 				sw.Start();
@@ -75,8 +81,8 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 					points[r] = temp;
 				}
 
-				var llist = new LinkedList<P>();
-				points.ForEach(p => llist.AddLast(p));
+				var linkedlist = new LinkedList<P>();
+				points.ForEach(p => linkedlist.AddLast(p));
 
 				if (ThreadData.Threads > 1)
 				{
@@ -90,17 +96,17 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 						ThreadData.ThreadPoints[i] = new List<P>();
 						for (int j = 0; j < delta; j++)
 						{
-							var p = llist.First();
-							llist.RemoveFirst();
+							var p = linkedlist.First();
+							linkedlist.RemoveFirst();
 							ThreadData.ThreadPoints[i].Add(p);
 						}
 					}
 
 					// Add remaining points to last array
-					while (llist.Any())
+					while (linkedlist.Any())
 					{
-						var p = llist.First();
-						llist.RemoveFirst();
+						var p = linkedlist.First();
+						linkedlist.RemoveFirst();
 						ThreadData.ThreadPoints.Last().Add(p);
 					}
 					
@@ -117,12 +123,19 @@ namespace GooglemapsClustering.Clustering.Data.Repository
 				{
 					ThreadData.ThreadPoints[0] = points; //.AsReadOnly();
 				}
+				var linkedList = new LinkedList<P>();
+				points.ForEach(p => linkedList.AddLast(p));
+
+				Points = points;
 
 				_memCache.Set<ThreadData>(ThreadData, CacheKeys.PointsDatabase, TimeSpan.FromHours(24));
 
 				var data = _memCache.Get<ThreadData>(CacheKeys.PointsDatabase);
 
-				if (data == null) throw new Exception("cache not working");
+				if (data == null)
+				{
+					throw new Exception("cache not working");
+				}
 
 				sw.Stop();
 				LoadTime = sw.Elapsed;

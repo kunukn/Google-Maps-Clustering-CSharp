@@ -1,8 +1,8 @@
-﻿using System;
-using System.Runtime.Serialization;
-using GooglemapsClustering.Clustering.Contract;
+﻿using GooglemapsClustering.Clustering.Contract;
 using GooglemapsClustering.Clustering.Extensions;
 using GooglemapsClustering.Clustering.Utility;
+using System;
+using System.Runtime.Serialization;
 
 namespace GooglemapsClustering.Clustering.Data.Geometry
 {
@@ -28,7 +28,7 @@ namespace GooglemapsClustering.Clustering.Data.Geometry
             return this;
         }
 
-        // Dist betwee two points on Earth
+        // Dist between two points on Earth
         public new virtual double Distance(double x, double y)
         {
             return MathTool.Haversine(this.Y, this.X, y, x);
@@ -39,9 +39,6 @@ namespace GooglemapsClustering.Clustering.Data.Geometry
             return string.Format("Uid: {0}, X:{1}, Y:{2}, T:{3}, I:{4}",
                 Uid, X, Y, T, I);
         }
-
-        
-
 
         // Used for e.g. serialization to file
         public P(SerializationInfo info, StreamingContext ctxt)

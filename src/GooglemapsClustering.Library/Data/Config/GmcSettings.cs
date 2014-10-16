@@ -41,7 +41,7 @@ namespace GooglemapsClustering.Clustering.Data.Config
 			OuterGridExtend = int.Parse(local[s = "OuterGridExtend"] ?? global[s] ?? Throw(s));
 			DoUpdateAllCentroidsToNearestContainingPoint = bool.Parse(local[s = "DoUpdateAllCentroidsToNearestContainingPoint"] ?? global[s] ?? Throw(s));
 			DoMergeGridIfCentroidsAreCloseToEachOther = bool.Parse(local[s = "DoMergeGridIfCentroidsAreCloseToEachOther"] ?? global[s] ?? Throw(s));
-			MergeWithin = int.Parse(local[s = "MergeWithin"] ?? global[s] ?? Throw(s));
+			MergeWithin = double.Parse(local[s = "MergeWithin"] ?? global[s] ?? Throw(s));
 			MinClusterSize = int.Parse(local[s = "MinClusterSize"] ?? global[s] ?? Throw(s));
 			MaxMarkersReturned = int.Parse(local[s = "MaxMarkersReturned"] ?? global[s] ?? Throw(s));
 			AlwaysClusteringEnabledWhenZoomLevelLess = int.Parse(local[s = "AlwaysClusteringEnabledWhenZoomLevelLess"] ?? global[s] ?? Throw(s));
@@ -49,9 +49,7 @@ namespace GooglemapsClustering.Clustering.Data.Config
 			MaxPointsInCache = int.Parse(local[s = "MaxPointsInCache"] ?? global[s] ?? Throw(s));
 			Threads = int.Parse(local[s = "Threads"] ?? global[s] ?? Throw(s));
 			CacheServices = bool.Parse(local[s = "CacheServices"] ?? global[s] ?? Throw(s));
-
 			Environment = local[s = "Environment"] ?? global[s] ?? Throw(s);
-			
 
 			var types = (local[s = "MarkerTypes"] ?? global[s] ?? Throw(s)).Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
 			MarkerTypes = new HashSet<int>();
@@ -67,15 +65,20 @@ namespace GooglemapsClustering.Clustering.Data.Config
 		// (see googlemaps-clustering-viewport_ver1.png inside the Docements/Design folder)
 		public int OuterGridExtend { get; private set; }
 
-		// Merge cluster points
-		public bool DoUpdateAllCentroidsToNearestContainingPoint { get; private set; } // move centroid point to nearest existing point?
-		public bool DoMergeGridIfCentroidsAreCloseToEachOther { get; private set; } // merge clusterpoints if close to each other?
-		public bool CacheServices { get; private set; } // cache get markers and get markers info services
+		// Move centroid point to nearest existing point?
+		public bool DoUpdateAllCentroidsToNearestContainingPoint { get; private set; }
 
-		public double MergeWithin { get; private set; } // if neighbor cluster is within 1/n dist then merge, heuristic, higher value gives less merging
+		// Merge clusterpoints if close to each other?
+		public bool DoMergeGridIfCentroidsAreCloseToEachOther { get; private set; }
 
-		// Cluster decision
-		public int MinClusterSize { get; private set; }	 // only cluster if minimum this number of points
+		// Cache get markers and get markers info services
+		public bool CacheServices { get; private set; }
+
+		// If neighbor cluster is within 1/n dist then merge, heuristic, higher value gives less merging
+		public double MergeWithin { get; private set; }
+
+		// Only cluster if minimum this number of points
+		public int MinClusterSize { get; private set; }
 
 		// If clustering is disabled, restrict number of markers returned
 		public int MaxMarkersReturned { get; private set; }
@@ -97,34 +100,25 @@ namespace GooglemapsClustering.Clustering.Data.Config
 		// Max allowed points in memory cache
 		public int MaxPointsInCache { get; private set; }
 
-		// 
 		public string Environment { get; private set; }
+
 
 		// Number of concurrent threads running for faster clustering
 		public int Threads { get; private set; }
 
-		// 
+
 		public NameValueCollection GetSectionLocal()
 		{
-			return (NameValueCollection)ConfigurationManager.GetSection(SectionLocal);
+			return ConfigurationManager.GetSection(SectionLocal) as NameValueCollection;
 		}
 		public static NameValueCollection GetSectionGlobal()
 		{
-			return (NameValueCollection)ConfigurationManager.GetSection(SectionGlobal);
+			return ConfigurationManager.GetSection(SectionGlobal) as NameValueCollection;
 		}
 
 		static string Throw(string s)
 		{
 			throw new Exception(string.Format("GmcGlobalKeySettings setup error: {0}", s));
 		}
-
-		public class EnvironmentOption
-		{
-			public const string Local = "local";
-			public const string Development = "dev";
-			public const string Test = "test";
-			public const string Prod = "prod";
-		}
-
 	}
 }
