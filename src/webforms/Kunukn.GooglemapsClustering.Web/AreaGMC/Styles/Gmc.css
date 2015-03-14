@@ -1,0 +1,137 @@
+﻿html {
+     height: 100%
+}
+body {
+     height: 100%; 
+     margin: 0px; 
+     padding: 0px
+}
+
+.ui-autocomplete {
+	background-color: #fff;
+	width: 410px;
+	border: 1px solid #cfcfcf;
+	list-style-type: none;
+	padding-left: 0px;
+}
+
+#gmcKN_search
+{
+    position: relative;
+    width: 400px;    
+}
+
+#gmcKN_topbar 
+{   
+    background-color: #000;
+    color: #fff; 
+    position: absolute;
+    overflow: hidden;
+    z-index: 3;
+}
+#gmcKN_topbar a {
+    color: #fff; 
+}
+
+#gmcKN_map_container
+{
+    width: 100%;
+    height: 100%;    
+    position: relative;
+    border: 0px #f00 solid;
+}
+    
+#gmcKN_map
+{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;        
+	max-width: 1600px;
+	max-height: 1000px;       
+}
+
+.gmcKN_mono
+{
+    font-family:monospace; 
+}
+
+#gmcKN_lonlat
+{    
+    border: none;    
+    background-color: #aaa;
+    font-family:monospace;
+}
+
+#gmcKN_longitude
+{
+    
+}
+
+#gmcKN_latitude
+{
+   
+}
+
+#gmcKN_btnLatLonSearch
+{
+   
+}
+
+
+#gmcKN_zoomInfo
+{    
+}
+
+#gmcKN_checkboxContainer
+{
+    position: absolute;
+    width:144px;    
+    height:270px;
+    border: 1px #000 solid;
+    background: #eee;
+    left:20px;
+    top:290px;
+    opacity: 0.65;
+    z-index: 3;
+}
+
+.inputZoom {
+    margin: 0px;
+    padding: 0px;
+}
+
+#gmcKN_checkboxContainer input
+{
+    margin-top: 10px;
+}
+
+
+.gmcKN_clustersize1
+{
+    font-family: arial;display:block;position: relative; left: -26px;top: -26px;font-weight:bold;text-align:center;line-height:52px;font-size:12px;font-weight:bold;
+    white-space: nowrap;color:#fff;background:url(../Images/m1.png) no-repeat 0 0;width:53px;height:52px;
+}
+.gmcKN_clustersize2
+{
+    font-family: arial;display:block;position: relative; left: -28px;top: -28px;font-weight:bold;text-align:center;line-height:55px;font-size:12px;font-weight:bold;
+    white-space: nowrap;color:#fff;background:url(../Images/m2.png) no-repeat 0 0;width:56px;height:55px;
+}
+.gmcKN_clustersize3
+{
+    font-family: arial;display:block;position: relative; left: -33px;top: -33px;font-weight:bold;text-align:center;line-height:65px;font-size:12px;font-weight:bold;
+    white-space: nowrap;color:#fff;background:url(../Images/m3.png) no-repeat 0 0;width:66px;height:65px;
+}
+.gmcKN_clustersize4
+{
+    font-family: arial;display:block;position: relative; left: -39px;top: -39px;font-weight:bold;text-align:center;line-height:77px;font-size:12px;font-weight:bold;
+    white-space: nowrap;color:#fff;background:url(../Images/m4.png) no-repeat 0 0;width:78px;height:77px;
+}
+.gmcKN_clustersize5
+{
+    font-family: arial;display:block;position: relative; left: -45px;top: -45px;font-weight:bold;text-align:center;line-height:89px;font-size:12px;font-weight:bold;
+    white-space: nowrap;color:#fff;background:url(../Images/m5.png) no-repeat 0 0;width:90px;height:89px;
+}
+
+#gmcKN_Clustering_span {
+    display: none;
+}

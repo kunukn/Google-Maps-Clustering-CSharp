@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BB8882F0-08A3-47D9-B4C2-31F60CD39F45}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Kunukn.GooglemapsClustering.Clustering</RootNamespace>
+    <AssemblyName>Kunukn.GooglemapsClustering.Clustering</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Kunukn.SingleDetectLibrary">
+      <HintPath>..\packages\SingleDetectLibrary\Kunukn.SingleDetectLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activation" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Algorithm\ClusterAlgorithmBase.cs" />
+    <Compile Include="Algorithm\GridCluster.cs" />
+    <Compile Include="Contract\IPoints.cs" />
+    <Compile Include="Contract\IP.cs" />
+    <Compile Include="Data\Json\GmcPDist.cs" />
+    <Compile Include="Data\Points.cs" />
+    <Compile Include="Data\Enums.cs" />
+    <Compile Include="Data\AlgoConfig.cs" />
+    <Compile Include="Data\Json\JsonKnnReply.cs" />
+    <Compile Include="Data\Json\JsonInfoReply.cs" />
+    <Compile Include="Utility\GmcInit.cs" />
+    <Compile Include="Utility\Dataset.cs" />
+    <Compile Include="Utility\FileUtil.cs" />
+    <Compile Include="Utility\Serializer.cs" />
+    <Compile Include="Utility\ExceptionUtil.cs" />
+    <Compile Include="Data\Boundary.cs" />
+    <Compile Include="Data\Bucket.cs" />
+    <Compile Include="Data\ClusterInfo.cs" />
+    <Compile Include="Utility\DataExtensions.cs" />
+    <Compile Include="Data\DatasetToSerialize.cs" />
+    <Compile Include="Data\Json\JsonGetMarkersReceive.cs" />
+    <Compile Include="Data\Json\JsonMarkersReply.cs" />
+    <Compile Include="Data\Json\JsonMarkerInfoReply.cs" />
+    <Compile Include="Data\Json\JsonReplyBase.cs" />
+    <Compile Include="Data\LatLonInfo.cs" />
+    <Compile Include="Data\Line.cs" />
+    <Compile Include="Data\MemoryDatabase.cs" />
+    <Compile Include="Data\Numbers.cs" />
+    <Compile Include="Data\P.cs" />
+    <Compile Include="Data\PBase.cs" />
+    <Compile Include="Data\Rectangle.cs" />
+    <Compile Include="Utility\MathTool.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebService\AjaxService.cs" />
+    <Compile Include="WebService\IAjaxService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Documents\Design\googlemaps-clustering-viewport_ver1.png" />
+    <Content Include="Documents\Design\GoogleMapsClustering_SD_ver1.png" />
+    <Content Include="Documents\FAQ.txt" />
+    <Content Include="Documents\License.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Documents\Design\googlemaps-clustering-viewport_ver1.vsd" />
+    <None Include="Documents\Design\GoogleMapsClustering_SD_ver1.vsd" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

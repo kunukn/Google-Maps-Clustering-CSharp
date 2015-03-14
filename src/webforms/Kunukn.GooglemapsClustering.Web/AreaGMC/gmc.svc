@@ -1,0 +1,4 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" 
+Service="Kunukn.GooglemapsClustering.Clustering.WebService.AjaxService,
+Kunukn.GooglemapsClustering.Clustering"
+ %>
