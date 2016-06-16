@@ -1,0 +1,191 @@
+﻿/* Resets */
+* {
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+}
+
+#gmcKN_search {
+    position: relative;
+    width: 400px;
+}
+
+#gmcKN_topbar {
+    background-color: #000;
+    color: #fff;
+    position: absolute;
+    overflow: hidden;
+    z-index: 3;
+}
+
+    #gmcKN_topbar a {
+        color: #fff;
+    }
+
+#gmcKN-map-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border: 0 #f00 solid;
+}
+
+#gmcKN-map {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* 
+        max width is important, 
+        if width is to big then the client request for full zoomed out map could make the clustering appear buggy 
+        */
+    max-width: 1600px;
+    max-height: 1000px;
+}
+
+.gmcKN-errorMsg {
+    position: absolute;
+    z-index: 10;
+    background-color: #f00;
+}
+
+#gmcKN-zoomInfo, #gmcKN-markersCount, #gmcKN-response-time, #gmcKN-cacheInfo {
+    display: block;
+}
+
+#gmcKN-zoomInfo {
+    margin-top: 14px;
+}
+
+#gmcKN_lonlat {
+    border: none;
+    background-color: #aaa;
+    font-family: monospace;
+}
+
+#gmcKN-checkboxContainer {
+    position: absolute;
+    min-width: 144px;
+    min-height: 280px;
+    border: 1px #000 solid;
+    background: #eee;
+    left: 20px;
+    top: 290px;
+    z-index: 3;
+    opacity: 0.85;
+}
+
+#gmcKN-checkboxContainer ul {
+        list-style: none;
+    }
+
+        #gmcKN-checkboxContainer ul li {
+            display: block;
+        }
+
+        #gmcKN-checkboxContainer ul input {
+        }
+
+        #gmcKN-checkboxContainer ul img {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+#gmcKN-zoomIn {
+    margin-right: 4px;
+}
+
+.inputZoom {
+    margin: 0;
+    padding: 0;
+}
+
+#gmcKN-checkboxContainer input {
+    margin-top: 10px;
+}
+
+.gmcKN_clustersize1, .gmcKN_clustersize2, .gmcKN_clustersize3, .gmcKN_clustersize4, .gmcKN_clustersize5 {
+    font-family: arial;
+    display: block;
+    position: relative;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    color: #fff;
+}
+
+
+.gmcKN_clustersize1 {
+    left: -26px;
+    top: -26px;
+    line-height: 52px;
+    font-size: 12px;
+    background: url(../Images/clusters/m1.png) no-repeat 0 0;
+    width: 53px;
+    height: 52px;
+}
+
+.gmcKN_clustersize2 {
+    left: -28px;
+    top: -28px;
+    line-height: 55px;
+    font-size: 12px;
+    background: url(../Images/clusters/m2.png) no-repeat 0 0;
+    width: 56px;
+    height: 55px;
+}
+
+.gmcKN_clustersize3 {
+    left: -33px;
+    top: -33px;
+    line-height: 65px;
+    font-size: 12px;
+    background: url(../Images/clusters/m3.png) no-repeat 0 0;
+    width: 66px;
+    height: 65px;
+}
+
+.gmcKN_clustersize4 {
+    left: -39px;
+    top: -39px;
+    text-align: center;
+    line-height: 77px;
+    font-size: 12px;
+    background: url(../Images/clusters/m4.png) no-repeat 0 0;
+    width: 78px;
+    height: 77px;
+}
+
+.gmcKN_clustersize5 {
+    left: -45px;
+    top: -45px;
+    line-height: 89px;
+    font-size: 12px;
+    background: url(../Images/clusters/m5.png) no-repeat 0 0;
+    width: 90px;
+    height: 89px;
+}
+
+#gmcKN-Clustering-span {
+    display: none;
+}
+
+
+.gmcKN-marker-info {
+    -moz-min-width: 200px;
+    -ms-min-width: 200px;
+    -o-min-width: 200px;
+    -webkit-min-width: 200px;
+    min-width: 200px;
+    min-height: 100px;
+    margin: 0;
+    padding: 0;
+}
